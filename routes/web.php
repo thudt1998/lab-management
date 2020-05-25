@@ -11,6 +11,12 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('managers')->group(function (){
+    Route::get('/login','ManagerLoginController@showLoginForm')->name(LOGIN_MANAGER);
 });
