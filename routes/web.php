@@ -15,8 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name(WELCOME);
 
-Route::prefix('managers')->group(function (){
-    Route::get('/login','ManagerLoginController@showLoginForm')->name(LOGIN_MANAGER);
+Route::prefix('managers')->group(function () {
+    Route::get('/login', 'ManagerLoginController@showLoginForm')->name(LOGIN_MANAGER);
+    Route::post('/login', 'ManagerLoginController@login');
+    Route::get('/', function () {
+        return view('pages.manager.index');
+    })->name(MANAGER);
 });

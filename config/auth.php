@@ -46,19 +46,14 @@ return [
             'provider' => 'users',
         ],
 
-        'manager' => [
+        'admin' => [
             'driver' => 'session',
-            'providers' => 'managers',
+            'providers' => 'admins',
         ],
 
         'lecturer' => [
             'driver' => 'session',
             'providers' => 'lecturers',
-        ],
-
-        'student' => [
-            'driver' => 'session',
-            'providers' => 'students',
         ],
     ],
 
@@ -82,15 +77,10 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Entities\Student::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
-
-        'managers' => [
+        'admins' => [
             'driver' => 'eloquent',
             'model' => App\Entities\Manager::class,
         ],
@@ -98,11 +88,6 @@ return [
         'lecturers' => [
             'driver' => 'eloquent',
             'model' => App\Entities\Lecturer::class,
-        ],
-
-        'students' => [
-            'driver' => 'eloquent',
-            'model' => App\Entities\Student::class,
         ],
     ],
 
@@ -128,20 +113,14 @@ return [
             'expire' => 60,
         ],
 
-        'managers' => [
-            'provider' => 'users',
+        'admins' => [
+            'provider' => 'admins',
             'table' => 'password_resets',
             'expire' => 60,
         ],
 
         'lecturers' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-        ],
-
-        'students' => [
-            'provider' => 'users',
+            'provider' => 'lecturers',
             'table' => 'password_resets',
             'expire' => 60,
         ],

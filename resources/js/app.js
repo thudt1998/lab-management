@@ -7,6 +7,9 @@
 
 require('./bootstrap');
 
+require("bootstrap-css-only/css/bootstrap.min.css");
+require("@fortawesome/fontawesome-free/css/all.min.css");
+
 window.Vue = require('vue');
 
 /**
