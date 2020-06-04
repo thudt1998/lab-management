@@ -20,6 +20,17 @@ class Lecturer extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'email',
+        'password',
+        'name',
+        'subject_id',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
 
 }

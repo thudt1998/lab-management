@@ -20,7 +20,11 @@ Route::get('/', function () {
 Route::prefix('managers')->group(function () {
     Route::get('/login', 'ManagerLoginController@showLoginForm')->name(LOGIN_MANAGER);
     Route::post('/login', 'ManagerLoginController@login');
-    Route::get('/', function () {
-        return view('pages.manager.index');
-    })->name(MANAGER);
+    Route::middleware(['auth:manager'])->group(function () {
+        Route::get('logout', 'ManagerLoginController@logout')->name(LOGOUT_MANAGER);
+        Route::get('/', function () {
+            return view('pages.manager.layouts.index');
+        })->name(MANAGER);
+        Route::resource('lecturers', 'LecturersController');
+    });
 });

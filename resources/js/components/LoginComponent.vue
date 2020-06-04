@@ -114,7 +114,7 @@
 
     Vue.use(VueMaterial);
     export default {
-        name: "LoginAdminComponent",
+        name: "LoginComponent",
         components: {
             mdbRow,
             mdbCol,
@@ -134,15 +134,15 @@
                 password: "",
                 errorEmail: "",
                 errorPassword: "",
-                errorSystem: "",
-                url: this.url
+                errorSystem: ""
             };
         },
         methods: {
             submit() {
                 axios.post(this.url, {email: this.email, password: this.password})
                     .then(() => {
-                        window.location.href = "/admin";
+                        let index = this.url.lastIndexOf('/');
+                        window.location.href = this.url.slice(0, index);
                     })
                     .catch(error => {
                             this.errorEmail = "";

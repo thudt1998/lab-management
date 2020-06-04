@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\LecturerCreateRequest;
 use App\Http\Requests\LecturerUpdateRequest;
 use App\Repositories\LecturerRepository;
-use App\Validators\LecturerValidator;
+use App\Repositories\SubjectRepository;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
  * Class LecturersController.
@@ -25,86 +22,63 @@ class LecturersController extends Controller
     protected $repository;
 
     /**
-     * @var LecturerValidator
+     * @var SubjectRepository
      */
-    protected $validator;
+    protected $subjectRepository;
 
     /**
      * LecturersController constructor.
      *
      * @param LecturerRepository $repository
-     * @param LecturerValidator $validator
+     * @param SubjectRepository $subjectRepository
      */
-    public function __construct(LecturerRepository $repository, LecturerValidator $validator)
+    public function __construct(LecturerRepository $repository, SubjectRepository $subjectRepository)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
+        $this->subjectRepository = $subjectRepository;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $lecturers = $this->repository->all();
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $lecturers,
-            ]);
-        }
-
-        return view('lecturers.index', compact('lecturers'));
+        $subjects = $this->subjectRepository->all();
+        return view('pages.manager.pages.lecturers', compact('lecturers', 'subjects'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  LecturerCreateRequest $request
+     * @param LecturerCreateRequest $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      *
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function store(LecturerCreateRequest $request)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $lecturer = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'Lecturer created.',
-                'data'    => $lecturer->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            $this->repository->createLecturer($request->only('name', 'email', 'subject'));
+            session()->flash('lecturer_create_success', trans('messages.create.success'));
+            return response()->json([
+                'error' => false
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('lecturer_create_fail', trans('messages.create.fail'));
+            return response()->json([
+                'error' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -125,7 +99,7 @@ class LecturersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -139,8 +113,8 @@ class LecturersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  LecturerUpdateRequest $request
-     * @param  string            $id
+     * @param LecturerUpdateRequest $request
+     * @param string $id
      *
      * @return Response
      *
@@ -156,7 +130,7 @@ class LecturersController extends Controller
 
             $response = [
                 'message' => 'Lecturer updated.',
-                'data'    => $lecturer->toArray(),
+                'data' => $lecturer->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -170,7 +144,7 @@ class LecturersController extends Controller
             if ($request->wantsJson()) {
 
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -183,7 +157,7 @@ class LecturersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

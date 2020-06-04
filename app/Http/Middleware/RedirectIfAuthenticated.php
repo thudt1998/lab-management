@@ -20,9 +20,9 @@ class RedirectIfAuthenticated
         if ($guard === MANAGER && Auth::guard($guard)->check()) {
             return redirect(route(MANAGER));
         }
-//        if (Auth::guard($guard)->check()) {
-//            return redirect('/home');
-//        }
+        if (Auth::guard($guard)->check()) {
+            return redirect('/home');
+        }
 
         return $next($request);
     }

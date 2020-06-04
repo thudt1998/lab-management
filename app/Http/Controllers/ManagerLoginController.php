@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AdminLoginRequest;
+use App\Entities\Manager;
+use App\Http\Requests\ManagerLoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ManagerLoginController extends Controller
 {
@@ -14,11 +16,11 @@ class ManagerLoginController extends Controller
     protected $redirectTo = '/manager';
 
     /**
-     * AdminLoginController constructor.
+     * ManagerLoginController constructor.
      */
     public function __construct()
     {
-        $this->middleware('guest:admin')->except('logout');
+        $this->middleware('guest:manager')->except('logout');
     }
 
     /**
@@ -26,7 +28,7 @@ class ManagerLoginController extends Controller
      */
     public function guard()
     {
-        return Auth::guard('admin');
+        return Auth::guard('manager');
     }
 
     /**
@@ -37,7 +39,7 @@ class ManagerLoginController extends Controller
         return view('auth.login-manager', ['url' => '/managers/login']);
     }
 
-    public function login(Request $request)
+    public function login(ManagerLoginRequest $request)
     {
         if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {
@@ -47,11 +49,37 @@ class ManagerLoginController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
-            return redirect()->route(DASHBOARD);
+            return redirect()->route(\MANAGER);
         }
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
     }
+
+    /**
+     * @param Request $request
+     * @throws ValidationException
+     */
+    public function sendFailedLoginResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            'system' => [trans('auth.failed')],
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return $this->loggedOut($request) ?: redirect('/managers');
+    }
+
+
 
 }

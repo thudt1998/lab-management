@@ -11,5 +11,9 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 interface LecturerRepository extends RepositoryInterface
 {
-    //
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function createLecturer($param);
 }

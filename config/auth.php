@@ -46,14 +46,14 @@ return [
             'provider' => 'users',
         ],
 
-        'admin' => [
+        'manager' => [
             'driver' => 'session',
-            'providers' => 'admins',
+            'provider' => 'managers',
         ],
 
         'lecturer' => [
             'driver' => 'session',
-            'providers' => 'lecturers',
+            'provider' => 'lecturers',
         ],
     ],
 
@@ -80,7 +80,7 @@ return [
             'model' => App\Entities\Student::class,
         ],
 
-        'admins' => [
+        'managers' => [
             'driver' => 'eloquent',
             'model' => App\Entities\Manager::class,
         ],
@@ -113,8 +113,8 @@ return [
             'expire' => 60,
         ],
 
-        'admins' => [
-            'provider' => 'admins',
+        'managers' => [
+            'provider' => 'managers',
             'table' => 'password_resets',
             'expire' => 60,
         ],

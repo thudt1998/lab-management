@@ -23,7 +23,8 @@ class Manager extends Authenticatable
      */
     protected $fillable = [
         'id',
-        'email'
+        'email',
+        'password'
     ];
 
 
