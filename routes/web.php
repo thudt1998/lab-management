@@ -11,6 +11,20 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
+})->name(WELCOME);
+
+Route::prefix('managers')->group(function () {
+    Route::get('/login', 'ManagerLoginController@showLoginForm')->name(LOGIN_MANAGER);
+    Route::post('/login', 'ManagerLoginController@login');
+    Route::middleware(['auth:manager'])->group(function () {
+        Route::get('logout', 'ManagerLoginController@logout')->name(LOGOUT_MANAGER);
+        Route::get('/', function () {
+            return view('pages.manager.layouts.index');
+        })->name(MANAGER);
+        Route::resource('lecturers', 'LecturersController');
+    });
 });
