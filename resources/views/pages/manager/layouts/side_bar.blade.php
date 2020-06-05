@@ -12,7 +12,7 @@
                 <i class="mr-3 fas fa-users"></i>Giảng viên
             </li>
         </a>
-        <a style="text-decoration: none;">
+        <a href="{{}}" style="text-decoration: none;">
             <li
                 class="{{request()->is('managers/laboratories*')?
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':

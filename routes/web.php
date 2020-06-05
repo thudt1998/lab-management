@@ -26,5 +26,6 @@ Route::prefix('managers')->group(function () {
             return view('pages.manager.layouts.index');
         })->name(MANAGER);
         Route::resource('lecturers', 'LecturersController');
+        Route::resource('laboratories','LaboratoriesController');
     });
 });
