@@ -2,7 +2,6 @@
     <loading-over-lay
         :active.sync="open"
         :can-cancel="false"
-        :is-full-page="isFullPage"
     >
         <div class="flex-row">
             <div class="text-center">
@@ -29,10 +28,6 @@ export default {
         open: {
             type: Boolean,
             default: false,
-        },
-        isFullPage: {
-            type: Boolean,
-            default: true
         }
     },
 };
