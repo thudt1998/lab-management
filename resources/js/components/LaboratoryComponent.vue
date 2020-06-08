@@ -15,7 +15,7 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    Danh sách giảng viên
+                    Danh sách phòng
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="d-flex">
@@ -70,35 +70,23 @@
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm">
-                            <span class="font-weight-500">Email</span>
-                        </th>
-                        <th class="th-sm">
-                            <span class="font-weight-500">Họ tên</span>
-                        </th>
-                        <th class="th-sm">
-                            <span class="font-weight-500">Trạng thái</span>
+                            <span class="font-weight-500">Tên</span>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="lecturer in lecturers"
-                        :key="lecturer.id"
+                        v-for="laboratory in laboratories"
+                        :key="laboratory.id"
                         style="cursor: pointer"
                         title="Xem chi tiết"
-                        @click="onclickRow(lecturer.id)"
+                        @click="onclickRow(laboratory.id)"
                     >
-                        <td style="width: 25%">
-                            {{ lecturer.id }}
+                        <td style="width: 50%">
+                            {{ laboratory.id }}
                         </td>
-                        <td style="width: 25%">
-                            {{ lecturer.email }}
-                        </td>
-                        <td style="width: 25%">
-                            {{ lecturer.name }}
-                        </td>
-                        <td style="width: 25%">
-                            {{ lecturer.status ? "On" : "Off" }}
+                        <td style="width: 50%">
+                            {{ laboratory.name }}
                         </td>
                     </tr>
                     </tbody>
@@ -110,7 +98,7 @@
                     @paginate="changePage"
                 />
                 <div
-                    v-show="lecturers.length === 0"
+                    v-show="laboratories.length === 0"
                     class="white text-center text-black-50"
                 >
                     {{messageNoData}}
@@ -133,7 +121,7 @@
                             class="modal-title"
                             style="margin-left: 150px"
                         >
-                            Thêm giảng viên
+                            Thêm phòng
                         </h4>
                         <button
                             id="btnCloseModal"
@@ -147,7 +135,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="name">Họ và tên</label>
+                            <label for="name">Tên phòng</label>
                             <input
                                 type="text"
                                 class="form-control"
@@ -162,41 +150,12 @@
                             </span>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
+                            <label for="location">Vị trí</label>
                             <input
                                 type="text"
                                 class="form-control"
-                                v-model="email"
-                                :class="{'error-input':errorEmail}"
+                                v-model="location"
                             />
-                            <span
-                                v-if="errorEmail"
-                                class="error-validate"
-                            >
-                                {{errorEmail}}
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Bộ môn</label>
-                            <select
-                                class="browser-default custom-select"
-                                v-model="subject"
-                                :class="{'error-input':errorSubject}"
-                            >
-                                <option
-                                    v-for="subject in subjects"
-                                    :value="subject.id"
-                                    :key="subject.id"
-                                >
-                                    {{subject.name}}
-                                </option>
-                            </select>
-                            <span
-                                v-if="errorSubject"
-                                class="error-validate"
-                            >
-                                {{errorSubject}}
-                            </span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -220,7 +179,7 @@
     import VueToast from "vue-toast-notification";
     import "vue-toast-notification/dist/theme-default.css";
     import {strings} from "../strings";
-    import {mdbCard, mdbContainer, mdbInput, mdbIcon} from "mdbvue";
+    import {mdbCard, mdbContainer, mdbIcon, mdbInput} from "mdbvue";
 
     Vue.use(VueToast);
     export default {
@@ -235,11 +194,8 @@
         data() {
             return {
                 name: "",
-                email: "",
-                subject: "",
+                location: "",
                 errorName: "",
-                errorEmail: "",
-                errorSubject: "",
                 isLoading: false,
                 pagination: {},
                 companiesData: {},
@@ -252,30 +208,26 @@
             }
         },
         props: {
-            lecturers: {
+            laboratories: {
                 type: Array,
                 default: []
             },
-            subjects: {
-                type: Array,
-                default: []
-            },
-            lecturerCreateSuccess: {
+            laboratoryCreateSuccess: {
                 type: String,
                 default: ""
             },
-            lecturerCreateFail: {
+            laboratoryCreateFail: {
                 type: String,
                 default: ""
             }
         },
         created() {
-            if (this.lecturerCreateSuccess) {
-                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.lecturerCreateSuccess,
+            if (this.laboratoryCreateSuccess) {
+                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.laboratoryCreateSuccess,
                     {position: "top-right", duration: "10000"});
             }
-            if (this.lecturerCreateFail) {
-                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.lecturerCreateFail,
+            if (this.laboratoryCreateFail) {
+                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.laboratoryCreateFail,
                     {position: "top-right", duration: "10000"});
             }
         },
@@ -288,40 +240,22 @@
                     } else {
                         this.errorName = "";
                     }
-                    if (!this.email) {
-                        this.errorEmail = strings.emailIsRequired;
-                    } else {
-                        this.errorEmail = "";
-                    }
-                    if (!this.subject) {
-                        this.errorSubject = strings.subjectIsRequired;
-                    } else {
-                        this.errorSubject = "";
-                    }
                 } else {
-                    this.addLecturer();
+                    this.addLaboratory();
                 }
             },
-            addLecturer() {
+            addLaboratory() {
                 this.isLoading = true;
-                axios.post('/managers/lecturers', {name: this.name, email: this.email, subject: this.subject})
+                axios.post('/managers/laboratories', {name: this.name})
                     .then(() => {
                         $('#btnCloseModal').click();
                         this.isLoading = false;
                         location.reload();
                     }).catch((error) => {
                     this.errorName = "";
-                    this.errorEmail = "";
-                    this.errorSubject = "";
                     let errors = error.response.data.errors;
                     if (errors["name"]) {
                         this.errorName = errors["name"][0];
-                    }
-                    if (errors["email"]) {
-                        this.errorEmail = errors["email"][0];
-                    }
-                    if (errors["subject"]) {
-                        this.errorSubject = errors["subject"][0];
                     }
                 });
             }

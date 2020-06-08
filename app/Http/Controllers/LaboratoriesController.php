@@ -25,40 +25,24 @@ class LaboratoriesController extends Controller
     protected $repository;
 
     /**
-     * @var LaboratoryValidator
-     */
-    protected $validator;
-
-    /**
      * LaboratoriesController constructor.
      *
      * @param LaboratoryRepository $repository
-     * @param LaboratoryValidator $validator
      */
-    public function __construct(LaboratoryRepository $repository, LaboratoryValidator $validator)
+    public function __construct(LaboratoryRepository $repository)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $laboratories = $this->repository->all();
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $laboratories,
-            ]);
-        }
-
-        return view('laboratories.index', compact('laboratories'));
+        return view('pages.manager.pages.laboratories', compact('laboratories'));
     }
 
     /**
@@ -66,38 +50,22 @@ class LaboratoriesController extends Controller
      *
      * @param  LaboratoryCreateRequest $request
      *
-     * @return \Illuminate\Http\Response
-     *
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(LaboratoryCreateRequest $request)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $laboratory = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'Laboratory created.',
-                'data'    => $laboratory->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            $this->repository->create($request->only('name','location'));
+            session()->flash('laboratory_create_success', trans('messages.create.success'));
+            return response()->json([
+                'error' => false
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('laboratory_create_fail', trans('messages.create.fail'));
+            return response()->json([
+                'error' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
