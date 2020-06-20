@@ -28,6 +28,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\StudentRepository::class, \App\Repositories\StudentRepositoryEloquent::class);
         $this->app->bind(\App\Repositories\SubjectRepository::class, \App\Repositories\SubjectRepositoryEloquent::class);
         $this->app->bind(\App\Repositories\LaboratoryRepository::class, \App\Repositories\LaboratoryRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\CompartmentRepository::class, \App\Repositories\CompartmentRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\ProjectTypeRepository::class, \App\Repositories\ProjectTypeRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\ProjectRepository::class, \App\Repositories\ProjectRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\EquipmentRepository::class, \App\Repositories\EquipmentRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\ProjectStudentRepository::class, \App\Repositories\ProjectStudentRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\TopicRepository::class, \App\Repositories\TopicRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\TopicProjectRepository::class, \App\Repositories\TopicProjectRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\EquipmentRepository::class, \App\Repositories\EquipmentRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\DeviceRepository::class, \App\Repositories\DeviceRepositoryEloquent::class);
         //:end-bindings:
     }
 }

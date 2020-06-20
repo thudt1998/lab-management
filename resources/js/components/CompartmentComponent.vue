@@ -15,7 +15,7 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    Danh sách phòng
+                    Danh sách ngăn phòng
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="d-flex">
@@ -70,23 +70,29 @@
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm">
+                            <span class="font-weight-500">Phòng</span>
+                        </th>
+                        <th class="th-sm">
                             <span class="font-weight-500">Tên</span>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="laboratory in laboratories"
-                        :key="laboratory.id"
+                        v-for="compartment in compartments"
+                        :key="compartment.id"
                         style="cursor: pointer"
                         title="Xem chi tiết"
-                        @click="onclickRow(laboratory.id)"
+                        @click="onclickRow(compartment.id)"
                     >
-                        <td style="width: 50%">
-                            {{ laboratory.id }}
+                        <td style="width: 20%">
+                            {{ compartment.id }}
                         </td>
-                        <td style="width: 50%">
-                            {{ laboratory.name }}
+                        <td style="width: 40%">
+                            {{ compartment.laboratory.name }}
+                        </td>
+                        <td style="width: 40%">
+                            {{ compartment.name }}
                         </td>
                     </tr>
                     </tbody>
@@ -98,7 +104,7 @@
                     @paginate="changePage"
                 />
                 <div
-                    v-show="laboratories.length === 0"
+                    v-show="compartments.length === 0"
                     class="white text-center text-black-50"
                 >
                     {{messageNoData}}
@@ -121,7 +127,7 @@
                             class="modal-title"
                             style="margin-left: 150px"
                         >
-                            Thêm phòng
+                            Thêm ngăn phòng
                         </h4>
                         <button
                             id="btnCloseModal"
@@ -135,12 +141,33 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="name">Tên phòng</label>
+                            <label for="subject">Phòng</label>
+                            <select
+                                class="browser-default custom-select"
+                                v-model="laboratory"
+                                :class="{'error-input':errorLaboratory}"
+                            >
+                                <option
+                                    v-for="laboratory in laboratories"
+                                    :value="laboratory.id"
+                                    :key="laboratory.id"
+                                >
+                                    {{laboratory.name}}
+                                </option>
+                            </select>
+                            <span
+                                v-if="errorLaboratory"
+                                class="error-validate"
+                            >
+                                {{errorLaboratory}}
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Tên ngăn phòng</label>
                             <input
                                 type="text"
                                 class="form-control"
-                                v-model="name"
-                                :class="{'error-input':errorName}"
+                                v-model="location"
                             />
                             <span
                                 v-if="errorName"
@@ -150,12 +177,46 @@
                             </span>
                         </div>
                         <div class="form-group">
-                            <label for="location">Vị trí</label>
+                            <label for="location">Số bàn</label>
                             <input
                                 type="text"
                                 class="form-control"
                                 v-model="location"
                             />
+                            <span
+                                v-if="errorName"
+                                class="error-validate"
+                            >
+                                {{errorName}}
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Số ghế</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="location"
+                            />
+                            <span
+                                v-if="errorName"
+                                class="error-validate"
+                            >
+                                {{errorName}}
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Số máy tính</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="location"
+                            />
+                            <span
+                                v-if="errorName"
+                                class="error-validate"
+                            >
+                                {{errorName}}
+                            </span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -183,7 +244,7 @@
 
     Vue.use(VueToast);
     export default {
-        name: "LecturerComponent",
+        name: "CompartmentComponent",
         components: {
             mdbCard,
             mdbContainer,
@@ -194,8 +255,9 @@
         data() {
             return {
                 name: "",
-                location: "",
+                laboratory: "",
                 errorName: "",
+                errorLaboratory: "",
                 isLoading: false,
                 pagination: {},
                 companiesData: {},
@@ -208,36 +270,43 @@
             }
         },
         props: {
+            compartments: {
+                type: Array,
+                default: []
+            },
             laboratories: {
                 type: Array,
                 default: []
             },
-            laboratoryCreateSuccess: {
+            compartmentCreateSuccess: {
                 type: String,
                 default: ""
             },
-            laboratoryCreateFail: {
+            compartmentCreateFail: {
                 type: String,
                 default: ""
             }
         },
         created() {
-            if (this.laboratoryCreateSuccess) {
-                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.laboratoryCreateSuccess,
+            if (this.compartmentCreateSuccess) {
+                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.compartmentCreateSuccess,
                     {position: "top-right", duration: "10000"});
             }
-            if (this.laboratoryCreateFail) {
-                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.laboratoryCreateFail,
+            if (this.compartmentCreateFail) {
+                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.compartmentCreateFail,
                     {position: "top-right", duration: "10000"});
             }
         },
         methods: {
             validateCreate() {
                 Vue.$toast.clear();
-                if (!this.name) {
-                    this.errorName = strings.nameIsRequired;
+                if (!this.name || !this.email || !this.subject) {
+                    if (!this.name) {
+                        this.errorName = strings.nameIsRequired;
+                    } else {
+                        this.errorName = "";
+                    }
                 } else {
-                    this.errorName = "";
                     this.addLaboratory();
                 }
             },

@@ -44,7 +44,7 @@
                         <hr/>
                         <div>
                             <a
-                                href="#"
+                                href="{{route(LOGIN_LECTURER)}}"
                                 class="btn btn-primary btn-login"
                             >
                                 Dành cho giảng viên

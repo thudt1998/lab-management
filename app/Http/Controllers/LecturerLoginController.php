@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\Manager;
-use App\Http\Requests\ManagerLoginRequest;
+use App\Http\Requests\LecturerLoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class ManagerLoginController extends Controller
+class LecturerLoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/manager';
+    protected $redirectTo = '/lecturer';
 
     /**
      * ManagerLoginController constructor.
      */
     public function __construct()
     {
-        $this->middleware('guest:manager')->except('logout');
+        $this->middleware('guest:lecturer')->except('logout');
     }
 
     /**
@@ -28,7 +27,7 @@ class ManagerLoginController extends Controller
      */
     public function guard()
     {
-        return Auth::guard('manager');
+        return Auth::guard('lecturer');
     }
 
     /**
@@ -36,10 +35,15 @@ class ManagerLoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login-manager', ['url' => '/managers/login']);
+        return view('auth.login-manager', ['url' => '/lecturers/login']);
     }
 
-    public function login(ManagerLoginRequest $request)
+    /**
+     * @param LecturerLoginController $request
+     * @return \Illuminate\Http\RedirectResponse|void
+     * @throws ValidationException
+     */
+    public function login(LecturerLoginRequest $request)
     {
         if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {
@@ -47,9 +51,8 @@ class ManagerLoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-
         if ($this->attemptLogin($request)) {
-            return redirect()->route(\MANAGER);
+            return redirect()->route(\LECTURER);
         }
         $this->incrementLoginAttempts($request);
 
@@ -77,7 +80,7 @@ class ManagerLoginController extends Controller
 
         $request->session()->invalidate();
 
-        return $this->loggedOut($request) ?: redirect('/managers');
+        return $this->loggedOut($request) ?: redirect('/lecturers');
     }
 
 }

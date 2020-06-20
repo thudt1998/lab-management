@@ -26,6 +26,20 @@ Route::prefix('managers')->group(function () {
             return view('pages.manager.layouts.index');
         })->name(MANAGER);
         Route::resource('lecturers', 'LecturersController');
-        Route::resource('laboratories','LaboratoriesController');
+        Route::resource('laboratories', 'LaboratoriesController');
+        Route::resource('compartments', 'CompartmentsController');
     });
+});
+
+Route::prefix('lecturers')->group(function () {
+    Route::get('/login', 'LecturerLoginController@showLoginForm')->name(LOGIN_LECTURER);
+    Route::post('/login', 'LecturerLoginController@login');
+    Route::middleware(['auth:lecturer'])->group(function () {
+        Route::get('logout', 'LecturerLoginController@logout')->name(LOGOUT_LECTURER);
+        Route::get('/', function () {
+            return view('pages.lecturer.lecturer');
+        })->name(LECTURER);
+    });
+    Route::resource('students','StudentsController');
+    Route::get('infoLaboratories','LecturersController@getInfoLaboratories');
 });

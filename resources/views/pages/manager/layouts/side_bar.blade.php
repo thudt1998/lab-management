@@ -21,7 +21,7 @@
                 <i class="mr-3 fas fa-building"></i>Phòng
             </li>
         </a>
-        <a style="text-decoration: none;">
+        <a href="{{route('compartments.index')}}" style="text-decoration: none;">
             <li
                 class="{{request()->is('managers/compartments*')?
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':

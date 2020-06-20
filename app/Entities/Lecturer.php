@@ -2,18 +2,20 @@
 
 namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Lecturer.
  *
  * @package namespace App\Entities;
  */
-class Lecturer extends Model implements Transformable
+class Lecturer extends Authenticatable
 {
-    use TransformableTrait;
+
+    use Notifiable;
+
+    protected $guarded = "lecturer";
 
     /**
      * The attributes that are mass assignable.

@@ -175,4 +175,16 @@ class LecturersController extends Controller
 
         return redirect()->back()->with('message', 'Lecturer deleted.');
     }
+
+    public function getInfoLaboratories()
+    {
+        try {
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
