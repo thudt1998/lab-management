@@ -11,5 +11,9 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 interface StudentRepository extends RepositoryInterface
 {
-    //
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function createStudent($param);
 }

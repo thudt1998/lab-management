@@ -35,8 +35,8 @@
                             </button>
                         </div>
                         <div class="card-body">
-                            <h4 class="card-title">Số sinh viên hiện tại: </h4>
-                            <button class="btn btn-primary btn-md">
+                            <h4 class="card-title">Số sinh viên hiện tại: {{students}}</h4>
+                            <button class="btn btn-primary btn-md" @click="getListStudents">
                                 <i class="fas fa-info-circle ml-2"></i> Xem danh sách
                             </button>
                         </div>
@@ -51,7 +51,7 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            <h4 class="card-title">Số đề tài hiện tại: </h4>
+                            <h4 class="card-title">Số đề tài hiện tại: {{topics}}</h4>
                             <button class="btn btn-primary btn-md">
                                 <i class="fas fa-info-circle ml-2"></i> Xem danh sách
                             </button>
@@ -67,7 +67,7 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            <h4 class="card-title">Số project hiện tại: </h4>
+                            <h4 class="card-title">Số project hiện tại: {{projects}}</h4>
                             <button class="btn btn-primary btn-md">
                                 <i class="fas fa-info-circle ml-2"></i> Xem danh sách
                             </button>
@@ -81,18 +81,32 @@
 
 <script>
     import axios from "axios";
+
     export default {
         name: "LaboratoryMainComponent",
         created() {
             axios.get('/lecturers/infoLaboratories')
-                .then(() => {
+                .then((res) => {
+                    let data = res.data;
+                    this.students = data.students;
+                    this.topics = data.topics;
+                    this.projects = data.projects;
                 }).catch((error) => {
                 console.log(error);
             });
         },
         data() {
-            return {}
+            return {
+                students: 0,
+                topics: 0,
+                projects: 0
+            };
         },
+        methods: {
+            getListStudents() {
+                window.location.href = '/lecturers/students';
+            }
+        }
     }
 </script>
 

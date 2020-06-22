@@ -19,9 +19,9 @@ class CreateCompartmentsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('laboratory_id');
             $table->string('name');
-            $table->integer('tables');
-            $table->integer('chairs');
-            $table->integer('computers');
+            $table->integer('tables')->default(0);
+            $table->integer('chairs')->default(0);
+            $table->integer('computers')->default(0);
             $table->foreign('laboratory_id')->references('id')->on('laboratories');
             $table->timestamps();
         });

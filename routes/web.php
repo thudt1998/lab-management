@@ -39,7 +39,9 @@ Route::prefix('lecturers')->group(function () {
         Route::get('/', function () {
             return view('pages.lecturer.lecturer');
         })->name(LECTURER);
+        Route::resource('students', 'StudentsController');
+        Route::resource('topics', 'TopicsController');
+        Route::resource('projects', 'ProjectsController');
+        Route::get('infoLaboratories', 'LecturersController@getInfoLaboratories');
     });
-    Route::resource('students','StudentsController');
-    Route::get('infoLaboratories','LecturersController@getInfoLaboratories');
 });

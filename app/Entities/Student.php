@@ -20,6 +20,23 @@ class Student extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'lecturer_id',
+        'name',
+        'email',
+        'password',
+        'class'
+    ];
+
+    protected $hidden = ['password'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function lecturer()
+    {
+        return $this->belongsTo(Lecturer::class);
+    }
 
 }

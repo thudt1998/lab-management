@@ -26,7 +26,7 @@ class LecturerCreateRequest extends FormRequest
     {
         return [
             'name' => 'required|max:50',
-//            'email' => ['required', 'unique:lecturers,email', new EmailFormat()],
+            'email' => ['required', 'unique:lecturers,email', new EmailFormat()],
             'subject' => 'required'
         ];
     }

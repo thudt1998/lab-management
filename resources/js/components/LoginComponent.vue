@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-dark white scrolling-navbar">
             <div class="navbar-brand text-black-50">
-                Take Action
+                <img src="image/logo.png">
             </div>
         </nav>
         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\EmailFormat;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StudentCreateRequest extends FormRequest
@@ -13,7 +14,7 @@ class StudentCreateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,8 @@ class StudentCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required|max:50',
+            'email' => ['required', 'unique:students,email', new EmailFormat()],
         ];
     }
 }

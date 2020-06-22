@@ -2,11 +2,13 @@
 
 namespace App\Repositories;
 
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
-use App\Repositories\StudentRepository;
 use App\Entities\Student;
+use App\Events\SendPassword;
 use App\Validators\StudentValidator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class StudentRepositoryEloquent.
@@ -25,7 +27,24 @@ class StudentRepositoryEloquent extends BaseRepository implements StudentReposit
         return Student::class;
     }
 
-    
+    /**
+     * @param $param
+     * @return mixed|void
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
+    public function createStudent($param)
+    {
+        $password = Str::random(8);
+        $lecturer = [
+            'lecturer_id' => $param['lecturer_id'],
+            'name' => $param['name'],
+            'email' => $param['email'],
+            'password' => Hash::make($password),
+            'class' => $param['class']
+        ];
+        $this->create($lecturer);
+        event(new SendPassword($param['email'], $password));
+    }
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +53,5 @@ class StudentRepositoryEloquent extends BaseRepository implements StudentReposit
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
 }

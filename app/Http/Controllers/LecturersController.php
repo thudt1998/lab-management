@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\Project;
+use App\Entities\Student;
+use App\Entities\Topic;
 use App\Http\Requests\LecturerCreateRequest;
 use App\Http\Requests\LecturerUpdateRequest;
 use App\Repositories\LecturerRepository;
@@ -179,7 +182,14 @@ class LecturersController extends Controller
     public function getInfoLaboratories()
     {
         try {
-
+            $students = Student::all()->count();
+            $topics = Topic::all()->count();
+            $projects = Project::all()->count();
+            return response()->json([
+                'students' => $students,
+                'topics' => $topics,
+                'projects' => $projects
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
