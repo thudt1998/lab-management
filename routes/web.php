@@ -34,6 +34,7 @@ Route::prefix('managers')->group(function () {
 Route::prefix('lecturers')->group(function () {
     Route::get('/login', 'LecturerLoginController@showLoginForm')->name(LOGIN_LECTURER);
     Route::post('/login', 'LecturerLoginController@login');
+    Route::put('forgot-password','LecturersController@forgotPassword');
     Route::middleware(['auth:lecturer'])->group(function () {
         Route::get('logout', 'LecturerLoginController@logout')->name(LOGOUT_LECTURER);
         Route::get('/', function () {
@@ -43,5 +44,13 @@ Route::prefix('lecturers')->group(function () {
         Route::resource('topics', 'TopicsController');
         Route::resource('projects', 'ProjectsController');
         Route::get('infoLaboratories', 'LecturersController@getInfoLaboratories');
+    });
+});
+
+Route::prefix('students')->group(function () {
+    Route::get('/login', 'StudentLoginController@showLoginForm')->name(LOGIN_LECTURER);
+    Route::post('/login', 'StudentLoginController@login');
+    Route::middleware(['auth:lecturer'])->group(function () {
+        Route::get('logout', 'LecturerLoginController@logout')->name(LOGOUT_LECTURER);
     });
 });

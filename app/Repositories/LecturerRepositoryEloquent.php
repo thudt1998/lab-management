@@ -34,7 +34,7 @@ class LecturerRepositoryEloquent extends BaseRepository implements LecturerRepos
      */
     public function createLecturer($param)
     {
-        $password = Str::random(6);
+        $password = Str::random(8);
         $lecturer = [
             'name' => $param['name'],
             'password' => Hash::make($password),

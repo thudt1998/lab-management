@@ -1,10 +1,5 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-dark white scrolling-navbar">
-            <div class="navbar-brand text-black-50">
-                <img src="image/logo.png">
-            </div>
-        </nav>
         <div>
             <div
                 class="name-system"
@@ -33,7 +28,7 @@
                                 <mdb-card-body class="mx-4 pl-1 pr-1 pt-5 pb-5">
                                     <div class="text-center">
                                         <h3 class="dark-grey-text mb-5 font-weight-bold">
-                                            Đăng nhập
+                                            Đăng nhập vào hệ thống
                                         </h3>
                                     </div>
                                     <form
@@ -85,13 +80,21 @@
                                         >
                                             {{ errorSystem }}
                                         </p>
-                                        <div class="text-center mb-3 mt-5">
+                                        <span
+                                            class="forgotPassword"
+                                            v-if="url!=='/managers/login'"
+                                            data-toggle="modal"
+                                            data-target="#modalForgotPassword"
+                                        >
+                                            Quên mật khẩu?
+                                        </span>
+                                        <div class="text-center mb-3" :class="url!=='/managers/login'?'mt-3':'mt-5'">
                                             <button
                                                 type="submit"
                                                 class="btn btn-primary"
                                                 style="width:100%; margin-left: -2px"
                                             >
-                                                ログイン
+                                                Đăng nhập
                                             </button>
                                         </div>
                                     </form>
@@ -100,6 +103,59 @@
                         </mdb-col>
                     </mdb-row>
                 </mdb-container>
+                <div class="modal fade" id="modalForgotPassword" tabindex="-1" role="dialog"
+                     aria-labelledby="modalForgotPassword"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title" id="exampleModalLabel">Đăng xuất</h3>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="font-size: 20px">
+                                <form
+                                    class="mr-2 ml-2"
+                                >
+                                    <md-field
+                                        :class="error && 'md-invalid'"
+                                    >
+                                        <label class="label">Email</label>
+                                        <md-input
+                                            v-model="emailForgot"
+                                            type="text"
+                                            autocomplete="new-password"
+                                        />
+                                        <span
+                                            v-if="error"
+                                            class="md-error"
+                                            style="font-size: 12px"
+                                        >
+                                            {{ error }}
+                                        </span>
+                                    </md-field>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    class="btn btn-warning"
+                                    @click="forgotPassword"
+                                >
+                                    Khôi phục
+                                </button>
+                                <button
+                                    id="btnCancel"
+                                    type="button"
+                                    class="btn btn-primary"
+                                    data-dismiss="modal"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     </div>
@@ -111,8 +167,10 @@
     import "vue-material/dist/vue-material.min.css";
     import "vue-material/dist/theme/default.css";
     import Vue from "vue";
+    import VueToast from "vue-toast-notification";
 
     Vue.use(VueMaterial);
+    Vue.use(VueToast);
     export default {
         name: "LoginComponent",
         components: {
@@ -134,7 +192,9 @@
                 password: "",
                 errorEmail: "",
                 errorPassword: "",
-                errorSystem: ""
+                errorSystem: "",
+                error: "",
+                emailForgot: ""
             };
         },
         methods: {
@@ -160,7 +220,28 @@
                             }
                         }
                     );
-            }
+            },
+            forgotPassword() {
+                this.error = "";
+                if (this.emailForgot === "") {
+                    this.error = "Vui lòng nhập email.";
+                } else {
+                    if (this.url === "/lecturers/login") {
+                        axios.put("/lecturers/forgot-password", {email: this.emailForgot})
+                            .then((res) => {
+                                if (res.data.error === false) {
+                                    $("#btnCancel").click();
+                                    Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + res.data.message,
+                                        {position: "top-right", duration: "10000"});
+                                } else {
+                                    this.error = res.data.message;
+                                }
+                            }).catch(err => {
+                                console.log(err);
+                        });
+                    }
+                }
+            },
         }
     };
 </script>
@@ -185,5 +266,17 @@
         .name-system {
             font-size: 1.5rem !important;
         }
+    }
+
+    .forgotPassword {
+        font-size: 1rem;
+        font-style: italic;
+        color: #2196f3;
+        cursor: pointer;
+    }
+
+    .forgotPassword:hover {
+        text-decoration: underline;
+        color: red;
     }
 </style>

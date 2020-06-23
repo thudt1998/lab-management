@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Entities\Project;
 use App\Entities\Student;
 use App\Entities\Topic;
+use App\Events\SendPassword;
 use App\Http\Requests\LecturerCreateRequest;
 use App\Http\Requests\LecturerUpdateRequest;
 use App\Repositories\LecturerRepository;
 use App\Repositories\SubjectRepository;
-use Prettus\Validator\Contracts\ValidatorInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
@@ -120,39 +123,13 @@ class LecturersController extends Controller
      * @param string $id
      *
      * @return Response
-     *
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function update(LecturerUpdateRequest $request, $id)
     {
         try {
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $lecturer = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'Lecturer updated.',
-                'data' => $lecturer->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
 
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -179,6 +156,9 @@ class LecturersController extends Controller
         return redirect()->back()->with('message', 'Lecturer deleted.');
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getInfoLaboratories()
     {
         try {
@@ -194,6 +174,29 @@ class LecturersController extends Controller
             return response()->json([
                 'error' => true,
                 'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $password = Str::random(8);
+            $lecturer = $this->repository->findWhere(['email' => $request->get('email')])->first();
+            $this->repository->update(['password' => Hash::make($password)], $lecturer->id);
+            event(new SendPassword($request->get('email'), $password));
+            return response()->json([
+                'error' => false,
+                'message' => trans('messages.update.password.success')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => trans('messages.update.password.fail')
             ]);
         }
     }

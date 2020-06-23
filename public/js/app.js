@@ -2957,6 +2957,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_material_dist_theme_default_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_material_dist_theme_default_css__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var vue_toast_notification__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-toast-notification */ "./node_modules/vue-toast-notification/dist/index.min.js");
+/* harmony import */ var vue_toast_notification__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vue_toast_notification__WEBPACK_IMPORTED_MODULE_6__);
 //
 //
 //
@@ -3063,6 +3065,63 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -3070,6 +3129,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 vue__WEBPACK_IMPORTED_MODULE_5___default.a.use(vue_material__WEBPACK_IMPORTED_MODULE_2___default.a);
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.use(vue_toast_notification__WEBPACK_IMPORTED_MODULE_6___default.a);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "LoginComponent",
   components: {
@@ -3091,7 +3151,9 @@ vue__WEBPACK_IMPORTED_MODULE_5___default.a.use(vue_material__WEBPACK_IMPORTED_MO
       password: "",
       errorEmail: "",
       errorPassword: "",
-      errorSystem: ""
+      errorSystem: "",
+      error: "",
+      emailForgot: ""
     };
   },
   methods: {
@@ -3123,6 +3185,33 @@ vue__WEBPACK_IMPORTED_MODULE_5___default.a.use(vue_material__WEBPACK_IMPORTED_MO
           _this.errorSystem = errors["system"][0];
         }
       });
+    },
+    forgotPassword: function forgotPassword() {
+      var _this2 = this;
+
+      this.error = "";
+
+      if (this.emailForgot === "") {
+        this.error = "Vui lòng nhập email.";
+      } else {
+        if (this.url === "/lecturers/login") {
+          axios__WEBPACK_IMPORTED_MODULE_1___default.a.put("/lecturers/forgot-password", {
+            email: this.emailForgot
+          }).then(function (res) {
+            if (res.data.error === false) {
+              $("#btnCancel").click();
+              vue__WEBPACK_IMPORTED_MODULE_5___default.a.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + res.data.message, {
+                position: "top-right",
+                duration: "10000"
+              });
+            } else {
+              _this2.error = res.data.message;
+            }
+          })["catch"](function (err) {
+            console.log(err);
+          });
+        }
+      }
     }
   }
 });
@@ -8731,7 +8820,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.form-elegant {\n    font-size: 0.8rem;\n}\n.form-elegant .z-depth-1a {\n    box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);\n}\n.form-elegant .z-depth-1-half,\n.form-elegant .btn:hover {\n    box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);\n}\n@media (max-width: 768px) {\n.name-system {\n        font-size: 1.5rem !important;\n}\n}\n", ""]);
+exports.push([module.i, "\n.form-elegant {\n    font-size: 0.8rem;\n}\n.form-elegant .z-depth-1a {\n    box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);\n}\n.form-elegant .z-depth-1-half,\n.form-elegant .btn:hover {\n    box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);\n}\n@media (max-width: 768px) {\n.name-system {\n        font-size: 1.5rem !important;\n}\n}\n.forgotPassword {\n    font-size: 1rem;\n    font-style: italic;\n    color: #2196f3;\n    cursor: pointer;\n}\n.forgotPassword:hover {\n    text-decoration: underline;\n    color: red;\n}\n", ""]);
 
 // exports
 
@@ -42362,8 +42451,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
-    _vm._v(" "),
     _c("div", [
       _c(
         "div",
@@ -42422,7 +42509,7 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                        Đăng nhập\n                                    "
+                                      "\n                                        Đăng nhập vào hệ thống\n                                    "
                                     )
                                   ]
                                 )
@@ -42558,9 +42645,34 @@ var render = function() {
                                       )
                                     : _vm._e(),
                                   _vm._v(" "),
+                                  _vm.url !== "/managers/login"
+                                    ? _c(
+                                        "span",
+                                        {
+                                          staticClass: "forgotPassword",
+                                          attrs: {
+                                            "data-toggle": "modal",
+                                            "data-target":
+                                              "#modalForgotPassword"
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                        Quên mật khẩu?\n                                    "
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
                                   _c(
                                     "div",
-                                    { staticClass: "text-center mb-3 mt-5" },
+                                    {
+                                      staticClass: "text-center mb-3",
+                                      class:
+                                        _vm.url !== "/managers/login"
+                                          ? "mt-3"
+                                          : "mt-5"
+                                    },
                                     [
                                       _c(
                                         "button",
@@ -42574,7 +42686,7 @@ var render = function() {
                                         },
                                         [
                                           _vm._v(
-                                            "\n                                            ログイン\n                                        "
+                                            "\n                                            Đăng nhập\n                                        "
                                           )
                                         ]
                                       )
@@ -42596,6 +42708,121 @@ var render = function() {
               )
             ],
             1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "modal fade",
+              attrs: {
+                id: "modalForgotPassword",
+                tabindex: "-1",
+                role: "dialog",
+                "aria-labelledby": "modalForgotPassword",
+                "aria-hidden": "true"
+              }
+            },
+            [
+              _c(
+                "div",
+                { staticClass: "modal-dialog", attrs: { role: "document" } },
+                [
+                  _c("div", { staticClass: "modal-content" }, [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "modal-body",
+                        staticStyle: { "font-size": "20px" }
+                      },
+                      [
+                        _c(
+                          "form",
+                          { staticClass: "mr-2 ml-2" },
+                          [
+                            _c(
+                              "md-field",
+                              { class: _vm.error && "md-invalid" },
+                              [
+                                _c("label", { staticClass: "label" }, [
+                                  _vm._v("Email")
+                                ]),
+                                _vm._v(" "),
+                                _c("md-input", {
+                                  attrs: {
+                                    type: "text",
+                                    autocomplete: "new-password"
+                                  },
+                                  model: {
+                                    value: _vm.emailForgot,
+                                    callback: function($$v) {
+                                      _vm.emailForgot = $$v
+                                    },
+                                    expression: "emailForgot"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _vm.error
+                                  ? _c(
+                                      "span",
+                                      {
+                                        staticClass: "md-error",
+                                        staticStyle: { "font-size": "12px" }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                        " +
+                                            _vm._s(_vm.error) +
+                                            "\n                                    "
+                                        )
+                                      ]
+                                    )
+                                  : _vm._e()
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal-footer" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-warning",
+                          on: { click: _vm.forgotPassword }
+                        },
+                        [
+                          _vm._v(
+                            "\n                                Khôi phục\n                            "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: {
+                            id: "btnCancel",
+                            type: "button",
+                            "data-dismiss": "modal"
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                                Cancel\n                            "
+                          )
+                        ]
+                      )
+                    ])
+                  ])
+                ]
+              )
+            ]
           )
         ],
         1
@@ -42608,18 +42835,26 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "nav",
-      {
-        staticClass:
-          "navbar navbar-expand-lg navbar-dark white scrolling-navbar"
-      },
-      [
-        _c("div", { staticClass: "navbar-brand text-black-50" }, [
-          _c("img", { attrs: { src: "image/logo.png" } })
-        ])
-      ]
-    )
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h3",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v("Đăng xuất")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
   }
 ]
 render._withStripped = true

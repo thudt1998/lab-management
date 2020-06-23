@@ -8,7 +8,7 @@
     <title>Lab</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-        .btn-login{
+        .btn-login {
             text-decoration: none !important;
             color: #fff !important;
             width: 300px;
@@ -16,54 +16,62 @@
     </style>
 </head>
 <body>
-    <div id="app">
-        <div class="row" style="margin-top: 10vh">
-            <div class="col-4"></div>
-            <div class="col-4">
-                <div class="card">
-                    <div class="view">
-                        <img src="{{asset('image/school.jpg')}}" class="card-img-top"
-                             alt="photo">
-                        <a href="#">
-                            <div class="mask rgba-white-slight"></div>
+<nav class="navbar navbar-expand-lg navbar-dark white scrolling-navbar">
+    <div class="navbar-brand text-black-50">
+        <a href="{{route(WELCOME)}}">
+            <img src="{{asset('image/logo.png')}}" width="100">
+        </a>
+    </div>
+</nav>
+<div id="app">
+    <div class="row" style="margin-top: 4vh">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="card">
+                <div class="view">
+                    <img src="{{asset('image/school.jpg')}}" class="card-img-top"
+                         alt="photo">
+                    <a href="#">
+                        <div class="mask rgba-white-slight"></div>
+                    </a>
+                </div>
+                <div
+                    class="card-body"
+                    style="text-align: center"
+                >
+                    <h4 class="card-title">Đăng nhập</h4>
+                    <div>
+                        <a
+                            href="{{route(LOGIN_MANAGER)}}"
+                            class="btn btn-primary btn-login"
+                        >
+                            Dành cho cán bộ quản lý
                         </a>
                     </div>
-                    <div
-                        class="card-body"
-                        style="text-align: center"
-                    >
-                        <h4 class="card-title">Đăng nhập</h4>
-                        <div>
-                            <a
-                                href="{{route(LOGIN_MANAGER)}}"
-                                class="btn btn-primary btn-login"
-                            >
-                                Dành cho cán bộ quản lý
-                            </a>
-                        </div>
-                        <hr/>
-                        <div>
-                            <a
-                                href="{{route(LOGIN_LECTURER)}}"
-                                class="btn btn-primary btn-login"
-                            >
-                                Dành cho giảng viên
-                            </a>
-                        </div>
-                        <hr/>
-                        <div>
-                            <a
-                                href="#"
-                                class="btn btn-primary btn-login"
-                            >
-                                Dành cho sinh viên
-                            </a>
-                        </div>
+                    <hr/>
+                    <div>
+                        <a
+                            href="{{route(LOGIN_LECTURER)}}"
+                            class="btn btn-primary btn-login"
+                        >
+                            Dành cho giảng viên
+                        </a>
+                    </div>
+                    <hr/>
+                    <div>
+                        <a
+                            href="#"
+                            class="btn btn-primary btn-login"
+                        >
+                            Dành cho sinh viên
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="{{asset('js/app.js')}}"></script>
+</div>
+@include('layouts.footer')
+<script src="{{asset('js/app.js')}}"></script>
 </body>
 </html>

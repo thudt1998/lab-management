@@ -31,11 +31,31 @@
             </li>
         </a>
 
-        <a href="{{route(LOGOUT_MANAGER)}}" style="text-decoration: none;font-size:1rem">
+        <a style="text-decoration: none;font-size:1rem" data-toggle="modal" data-target="#modalLogout">
             <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-action logout text-dark border-top">
-                <i class="mr-3 fas fa-sign-out-alt text-dark"></i>ログアウト
+                <i class="mr-3 fas fa-sign-out-alt text-dark"></i>Đăng xuất
             </li>
         </a>
+        <div class="modal fade" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="exampleModalLabel">Đăng xuất</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="font-size: 20px">
+                        Bạn có thực sự muốn đăng xuất?
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-danger" href="{{route(LOGOUT_MANAGER)}}" style="text-decoration: none">Yes</a>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </ul>
 </div>
 
