@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\TopicCreateRequest;
 use App\Http\Requests\TopicUpdateRequest;
 use App\Repositories\TopicRepository;
 use App\Validators\TopicValidator;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
  * Class TopicsController.
@@ -25,86 +22,57 @@ class TopicsController extends Controller
     protected $repository;
 
     /**
-     * @var TopicValidator
-     */
-    protected $validator;
-
-    /**
      * TopicsController constructor.
      *
      * @param TopicRepository $repository
-     * @param TopicValidator $validator
      */
-    public function __construct(TopicRepository $repository, TopicValidator $validator)
+    public function __construct(TopicRepository $repository)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $topics = $this->repository->all();
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $topics,
-            ]);
-        }
-
-        return view('topics.index', compact('topics'));
+        return view('pages.lecturer.pages.topic', compact('topics'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  TopicCreateRequest $request
+     * @param TopicCreateRequest $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function store(TopicCreateRequest $request)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $topic = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'Topic created.',
-                'data'    => $topic->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            $request['lecturer_id'] = auth()->user()->id;
+            $this->repository->create($request->only('lecturer_id', 'name'));
+            session()->flash('topic_create_success', trans('messages.create.success'));
+            return response()->json([
+                'error' => false
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('topic_create_fail', trans('messages.create.fail'));
+            return response()->json([
+                'error' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -125,7 +93,7 @@ class TopicsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -139,8 +107,8 @@ class TopicsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  TopicUpdateRequest $request
-     * @param  string            $id
+     * @param TopicUpdateRequest $request
+     * @param string $id
      *
      * @return Response
      *
@@ -156,7 +124,7 @@ class TopicsController extends Controller
 
             $response = [
                 'message' => 'Topic updated.',
-                'data'    => $topic->toArray(),
+                'data' => $topic->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -170,7 +138,7 @@ class TopicsController extends Controller
             if ($request->wantsJson()) {
 
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -183,7 +151,7 @@ class TopicsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

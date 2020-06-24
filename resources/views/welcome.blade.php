@@ -13,6 +13,9 @@
             color: #fff !important;
             width: 300px;
         }
+        .logo{
+            height: 350px !important;
+        }
     </style>
 </head>
 <body>
@@ -24,12 +27,12 @@
     </div>
 </nav>
 <div id="app">
-    <div class="row" style="margin-top: 4vh">
+    <div class="row" style="margin-top: 5vh">
         <div class="col-4"></div>
         <div class="col-4">
             <div class="card">
                 <div class="view">
-                    <img src="{{asset('image/school.jpg')}}" class="card-img-top"
+                    <img src="{{asset('image/school.jpg')}}" class="card-img-top logo"
                          alt="photo">
                     <a href="#">
                         <div class="mask rgba-white-slight"></div>
@@ -39,7 +42,7 @@
                     class="card-body"
                     style="text-align: center"
                 >
-                    <h4 class="card-title">Đăng nhập</h4>
+                    <h3 class="card-title" style="color: #661a00; font-weight: bold">Đăng nhập</h3>
                     <div>
                         <a
                             href="{{route(LOGIN_MANAGER)}}"

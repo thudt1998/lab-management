@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentUpdateRequest;
 use App\Repositories\StudentRepository;
+use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -165,5 +166,17 @@ class StudentsController extends Controller
         }
 
         return redirect()->back()->with('message', 'Student deleted.');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchStudent(Request $request)
+    {
+        $students = $this->repository->findWhere([['name', 'like', '%' . $request->get('name') . '%']]);
+        return response()->json([
+            'data' => $students
+        ]);
     }
 }

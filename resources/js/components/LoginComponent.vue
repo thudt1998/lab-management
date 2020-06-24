@@ -3,7 +3,7 @@
         <div>
             <div
                 class="name-system"
-                style="margin-top: 14vh; font-size: 2.5rem; text-align: center; font-weight: 500"
+                style="margin-top: 14vh; font-size: 2.5rem; text-align: center; font-weight: 500;color: #661a00; font-weight: bold"
             >
                 Hệ thống phòng thí nghiệm
             </div>
@@ -109,7 +109,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h3 class="modal-title" id="exampleModalLabel">Đăng xuất</h3>
+                                <h3 class="modal-title" id="exampleModalLabel">Khôi phục mật khẩu</h3>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

@@ -19,6 +19,7 @@ class CreateProjectsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('lecturer_id');
             $table->unsignedBigInteger('compartment_id');
+            $table->string('name');
             $table->string('date_start');
             $table->string('date_finish');
             $table->foreign('lecturer_id')->references('id')->on('lecturers');

@@ -26,4 +26,12 @@ class Laboratory extends Model implements Transformable
         'location'
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function compartments()
+    {
+        return $this->hasMany(Compartment::class);
+    }
+
 }

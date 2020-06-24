@@ -20,6 +20,10 @@ class Topic extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'lecturer_id',
+        'name'
+    ];
 
 }

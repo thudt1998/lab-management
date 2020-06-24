@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@jkryszto/mdb-for-laravel": "^1.0.0",
+        "@johmun/vue-tags-input": "^2.1.0",
         "mdbvue": "^6.7.1",
         "vue-loading-overlay": "^3.3.2",
         "vue-material": "^1.0.0-beta-14",

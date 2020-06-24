@@ -1,6 +1,6 @@
 <div class="sidebar-fixed position-fixed">
-    <div style="height: 120px;margin:0 auto;text-align: center;padding-top:40px">
-        <h2></h2>
+    <div class="mt-3 mb-3" style="margin:0 auto;text-align: center">
+       <a href="{{route(MANAGER)}}"><img src="{{asset('image/default-avatar.png')}}" class="avatar"></a>
     </div>
     <ul class="list-group" style="position: relative">
         <a href="{{route('lecturers.index')}}" style="text-decoration: none;">
@@ -104,4 +104,6 @@
     .border-top {
         border-top: 1px solid rgba(0, 0, 0, .125) !important;
     }
+
+
 </style>

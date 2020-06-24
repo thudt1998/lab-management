@@ -17,35 +17,10 @@
                 <div class="margin-top font-size">
                     <strong>Danh sách đề tài</strong>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex">
-                        <md-field
-                            style="width: 10rem"
-                        >
-                            <md-select
-                                v-model="entry"
-                                class="entry"
-                                @md-selected="getListCompanies()"
-                            >
-                                <md-option value="10">
-                                    10
-                                </md-option>
-                                <md-option value="20">
-                                    20
-                                </md-option>
-                                <md-option value="50">
-                                    50
-                                </md-option>
-                                <md-option value="100">
-                                    100
-                                </md-option>
-                            </md-select>
-                        </md-field>
-                        <span style="margin-top: 2.8rem; margin-left: 5px">Số dòng</span>
-                    </div>
+                <div class="d-flex justify-content-end">
                     <mdb-input
                         v-model="keyword"
-                        label="IDで検索"
+                        label="Tìm kiếm"
                         class="mb-0"
                         @change="searchCompanies"
                     />
@@ -70,23 +45,23 @@
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm" style="text-align: center">
-                            <span class="font-weight-500">Họ và tên</span>
+                            <span class="font-weight-500">Tên đề tài</span>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="student in students"
-                        :key="student.id"
+                        v-for="topic in topics"
+                        :key="topic.id"
                         style="cursor: pointer"
                         title="Xem chi tiết"
-                        @click="onclickRow(student.id)"
+                        @click="onclickRow(topic.id)"
                     >
                         <td style="width: 20%">
-                            {{ student.id }}
+                            {{ topic.id }}
                         </td>
                         <td style="width: 80%;text-align: center">
-                            {{ student.name }}
+                            {{ topic.name }}
                         </td>
                     </tr>
                     </tbody>
@@ -98,7 +73,7 @@
                     @paginate="changePage"
                 />
                 <div
-                    v-show="students.length === 0"
+                    v-show="topics.length === 0"
                     class="white text-center text-black-50"
                 >
                     {{messageNoData}}
@@ -114,13 +89,13 @@
             aria-hidden="true"
             style="margin-top: 20vh"
         >
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4
                             class="modal-title"
                         >
-                            Thêm sinh viên
+                            Thêm đề tài
                         </h4>
                         <button
                             id="btnCloseModal"
@@ -134,7 +109,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="name">Họ và tên</label>
+                            <label for="name">Tên đề tài</label>
                             <input
                                 type="text"
                                 class="form-control"
@@ -147,29 +122,6 @@
                             >
                                 {{errorName}}
                             </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                v-model="email"
-                                :class="{'error-input':errorEmail}"
-                            />
-                            <span
-                                v-if="errorEmail"
-                                class="error-validate"
-                            >
-                                {{errorEmail}}
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="classStudent">Lớp</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                v-model="classStudent"
-                            />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -210,33 +162,30 @@
             return {
                 isLoading: false,
                 name: "",
-                email: "",
-                classStudent: "",
                 errorName: "",
-                errorEmail: "",
                 messageNoData: strings.messageNoData
             };
         },
         created() {
-            if (this.studentCreateSuccess) {
-                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.studentCreateSuccess,
+            if (this.topicCreateSuccess) {
+                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.topicCreateSuccess,
                     {position: "top-right", duration: "10000"});
             }
-            if (this.studentCreateFail) {
-                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.studentCreateFail,
+            if (this.topicCreateFail) {
+                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.topicCreateFail,
                     {position: "top-right", duration: "10000"});
             }
         },
         props: {
-            students: {
+            topics: {
                 type: Array,
                 default: []
             },
-            studentCreateSuccess: {
+            topicCreateSuccess: {
                 type: String,
                 default: ""
             },
-            studentCreateFail: {
+            topicCreateFail: {
                 type: String,
                 default: ""
             }
@@ -244,38 +193,25 @@
         methods: {
             validateCreate() {
                 Vue.$toast.clear();
-                if (!this.name || !this.email) {
+                if (!this.name) {
                     if (!this.name) {
                         this.errorName = strings.nameIsRequired;
                     } else {
                         this.errorName = "";
                     }
-                    if (!this.email) {
-                        this.errorEmail = strings.emailIsRequired;
-                    } else {
-                        this.errorEmail = "";
-                    }
                 } else {
-                    this.addLecturer();
+                    this.addTopic();
                 }
             },
-            addLecturer() {
+            addTopic() {
                 this.isLoading = true;
-                axios.post('/lecturers/students', {name: this.name, email: this.email, class: this.classStudent})
-                    .then((res) => {
+                axios.post('/lecturers/topics', {name: this.name})
+                    .then(() => {
                         $('#btnCloseModal').click();
                         this.isLoading = false;
                         location.reload();
                     }).catch((error) => {
-                    this.errorName = "";
-                    this.errorEmail = "";
-                    let errors = error.response.data.errors;
-                    if (errors["name"]) {
-                        this.errorName = errors["name"][0];
-                    }
-                    if (errors["email"]) {
-                        this.errorEmail = errors["email"][0];
-                    }
+                    console.log(error);
                 });
             }
         }

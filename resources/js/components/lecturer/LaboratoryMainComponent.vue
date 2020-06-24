@@ -46,13 +46,13 @@
                     <div class="card">
                         <div class="view overlay card-image">
                             <img src="image/project-type.png" class="card-img-top">
-                            <a href="#">
+                            <button @click="getListTopics">
                                 <div class="mask rgba-white-slight"></div>
-                            </a>
+                            </button>
                         </div>
                         <div class="card-body">
                             <h4 class="card-title">Số đề tài hiện tại: {{topics}}</h4>
-                            <button class="btn btn-primary btn-md">
+                            <button class="btn btn-primary btn-md" @click="getListTopics">
                                 <i class="fas fa-info-circle ml-2"></i> Xem danh sách
                             </button>
                         </div>
@@ -62,13 +62,13 @@
                     <div class="card">
                         <div class="view overlay card-image">
                             <img src="image/project.jpg" class="card-img-top" alt="">
-                            <a href="https://mdbootstrap.com/vue/" target="_blank">
+                            <button @click="getListProjects">
                                 <div class="mask rgba-white-slight"></div>
-                            </a>
+                            </button>
                         </div>
                         <div class="card-body">
                             <h4 class="card-title">Số project hiện tại: {{projects}}</h4>
-                            <button class="btn btn-primary btn-md">
+                            <button class="btn btn-primary btn-md" @click="getListProjects">
                                 <i class="fas fa-info-circle ml-2"></i> Xem danh sách
                             </button>
                         </div>
@@ -105,6 +105,12 @@
         methods: {
             getListStudents() {
                 window.location.href = '/lecturers/students';
+            },
+            getListTopics() {
+                window.location.href = '/lecturers/topics';
+            },
+            getListProjects() {
+                window.location.href = '/lecturers/projects';
             }
         }
     }
