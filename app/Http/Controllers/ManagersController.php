@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
+use App\Entities\Message;
+use App\Entities\Project;
+use App\Entities\Student;
 use App\Http\Requests\ManagerCreateRequest;
 use App\Http\Requests\ManagerUpdateRequest;
 use App\Repositories\ManagerRepository;
 use App\Validators\ManagerValidator;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
  * Class ManagersController.
@@ -25,20 +25,13 @@ class ManagersController extends Controller
     protected $repository;
 
     /**
-     * @var ManagerValidator
-     */
-    protected $validator;
-
-    /**
      * ManagersController constructor.
      *
      * @param ManagerRepository $repository
-     * @param ManagerValidator $validator
      */
-    public function __construct(ManagerRepository $repository, ManagerValidator $validator)
+    public function __construct(ManagerRepository $repository)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
     }
 
     /**
@@ -64,7 +57,7 @@ class ManagersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  ManagerCreateRequest $request
+     * @param ManagerCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      *
@@ -80,7 +73,7 @@ class ManagersController extends Controller
 
             $response = [
                 'message' => 'Manager created.',
-                'data'    => $manager->toArray(),
+                'data' => $manager->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -92,7 +85,7 @@ class ManagersController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -104,7 +97,7 @@ class ManagersController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -125,7 +118,7 @@ class ManagersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -139,8 +132,8 @@ class ManagersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  ManagerUpdateRequest $request
-     * @param  string            $id
+     * @param ManagerUpdateRequest $request
+     * @param string $id
      *
      * @return Response
      *
@@ -156,7 +149,7 @@ class ManagersController extends Controller
 
             $response = [
                 'message' => 'Manager updated.',
-                'data'    => $manager->toArray(),
+                'data' => $manager->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -170,7 +163,7 @@ class ManagersController extends Controller
             if ($request->wantsJson()) {
 
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -183,7 +176,7 @@ class ManagersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -200,5 +193,34 @@ class ManagersController extends Controller
         }
 
         return redirect()->back()->with('message', 'Manager deleted.');
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNotifications()
+    {
+        $notifications = Message::with(['project', 'compartment'])->where('status', '1')->get();
+        return response()->json([
+            'notifications' => $notifications
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getStudents()
+    {
+        $students = Student::all();
+        return view('pages.manager.pages.students', compact('students'));
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getProjects()
+    {
+        $projects = Project::with('lecturer')->get();
+        return view('pages.manager.pages.projects', compact('projects'));
     }
 }

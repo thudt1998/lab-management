@@ -1,13 +1,7 @@
 <template>
     <div>
         <div>
-            <div
-                class="name-system"
-                style="margin-top: 14vh; font-size: 2.5rem; text-align: center; font-weight: 500;color: #661a00; font-weight: bold"
-            >
-                Hệ thống phòng thí nghiệm
-            </div>
-            <section class="form-elegant">
+            <section class="form-elegant mt-5">
                 <mdb-container>
                     <mdb-row>
                         <mdb-col
@@ -27,7 +21,7 @@
                             <mdb-card style="margin-top: 5vh; border: 0; border-radius: 0">
                                 <mdb-card-body class="mx-4 pl-1 pr-1 pt-5 pb-5">
                                     <div class="text-center">
-                                        <h3 class="dark-grey-text mb-5 font-weight-bold">
+                                        <h3 class="dark-grey-text mb-5 font-weight-bold title-login">
                                             Đăng nhập vào hệ thống
                                         </h3>
                                     </div>
@@ -278,5 +272,9 @@
     .forgotPassword:hover {
         text-decoration: underline;
         color: red;
+    }
+
+    .title-login{
+        color: #661a00 !important;
     }
 </style>

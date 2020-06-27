@@ -23,11 +23,14 @@ Route::prefix('managers')->group(function () {
     Route::middleware(['auth:manager'])->group(function () {
         Route::get('logout', 'ManagerLoginController@logout')->name(LOGOUT_MANAGER);
         Route::get('/', function () {
-            return view('pages.manager.layouts.index');
+            return view('pages.manager.pages.manager');
         })->name(MANAGER);
         Route::resource('lecturers', 'LecturersController');
         Route::resource('laboratories', 'LaboratoriesController');
         Route::resource('compartments', 'CompartmentsController');
+        Route::get('get-notification', 'ManagersController@getNotifications');
+        Route::get('get-students', 'ManagersController@getStudents')->name(LIST_STUDENTS_MANGER);
+        Route::get('get-projects', 'ManagersController@getProjects')->name(LIST_PROJECTS_MANGER);
     });
 });
 

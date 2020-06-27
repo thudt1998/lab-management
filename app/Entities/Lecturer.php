@@ -35,4 +35,18 @@ class Lecturer extends Authenticatable
         'status' => 'boolean'
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subject(){
+        return $this->belongsTo(Subject::class,'subject_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects(){
+        return $this->hasMany(Project::class);
+    }
+
 }

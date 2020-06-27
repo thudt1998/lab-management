@@ -22,12 +22,16 @@
 <nav class="navbar navbar-expand-lg navbar-dark white scrolling-navbar">
     <div class="navbar-brand text-black-50">
         <a href="{{route(WELCOME)}}">
-            <img src="{{asset('image/logo.png')}}" width="100">
+            <img src="{{asset('image/logo.png')}}" width="150">
         </a>
+    </div>
+    <div class="pt-2">
+        <h5>TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI</h5>
+        <h5>VIỆN CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG</h5>
     </div>
 </nav>
 <div id="app">
-    <div class="row" style="margin-top: 5vh">
+    <div class="row" style="margin-top: 3vh">
         <div class="col-4"></div>
         <div class="col-4">
             <div class="card">

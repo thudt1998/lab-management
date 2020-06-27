@@ -60,6 +60,6 @@ class PeriodExist implements Rule
      */
     public function message()
     {
-        return 'The validation error message.';
+        return 'Thời gian đã có project.';
     }
 }

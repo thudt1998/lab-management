@@ -15,37 +15,12 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    Danh sách ngăn phòng
+                    <h3>Danh sách ngăn phòng</h3>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex">
-                        <md-field
-                            style="width: 10rem"
-                        >
-                            <md-select
-                                v-model="entry"
-                                class="entry"
-                                @md-selected="getListCompanies()"
-                            >
-                                <md-option value="10">
-                                    10
-                                </md-option>
-                                <md-option value="20">
-                                    20
-                                </md-option>
-                                <md-option value="50">
-                                    50
-                                </md-option>
-                                <md-option value="100">
-                                    100
-                                </md-option>
-                            </md-select>
-                        </md-field>
-                        <span style="margin-top: 2.8rem; margin-left: 5px">Số dòng</span>
-                    </div>
+                <div class="d-flex justify-content-end">
                     <mdb-input
                         v-model="keyword"
-                        label="IDで検索"
+                        label="Tìm kiếm"
                         class="mb-0"
                         @change="searchCompanies"
                     />

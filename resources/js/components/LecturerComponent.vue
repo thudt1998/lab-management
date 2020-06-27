@@ -15,39 +15,14 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    Danh sách giảng viên
+                    <h3 style="color: #661a00">Danh sách giảng viên</h3>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex">
-                        <md-field
-                            style="width: 10rem"
-                        >
-                            <md-select
-                                v-model="entry"
-                                class="entry"
-                                @md-selected="getListCompanies()"
-                            >
-                                <md-option value="10">
-                                    10
-                                </md-option>
-                                <md-option value="20">
-                                    20
-                                </md-option>
-                                <md-option value="50">
-                                    50
-                                </md-option>
-                                <md-option value="100">
-                                    100
-                                </md-option>
-                            </md-select>
-                        </md-field>
-                        <span style="margin-top: 2.8rem; margin-left: 5px">Số dòng</span>
-                    </div>
+                <div class="d-flex justify-content-end">
                     <mdb-input
                         v-model="keyword"
-                        label="IDで検索"
+                        label="Tìm kiếm"
                         class="mb-0"
-                        @change="searchCompanies"
+                        @change="searchLecturer"
                     />
                 </div>
                 <table
@@ -57,54 +32,70 @@
                     <tr>
                         <th
                             class="th-sm"
-                            @click="sortCompanies('company_id_3rd')"
                         >
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'ASC'"
-                                icon="sort-up"
-                            />
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'DESC'"
-                                icon="sort-down"
-                            />
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm">
                             <span class="font-weight-500">Email</span>
                         </th>
-                        <th class="th-sm">
+                        <th
+                            class="th-sm"
+                            @click="sortLecturers"
+                        >
+                            <mdb-icon
+                                v-if="sort === 'ASC'"
+                                icon="sort-up"
+                            />
+                            <mdb-icon
+                                v-if="sort === 'DESC'"
+                                icon="sort-down"
+                            />
                             <span class="font-weight-500">Họ tên</span>
                         </th>
                         <th class="th-sm">
                             <span class="font-weight-500">Trạng thái</span>
                         </th>
+                        <th class="th-sm"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="lecturer in lecturers"
+                        v-for="lecturer in lecturers.data"
                         :key="lecturer.id"
-                        style="cursor: pointer"
-                        title="Xem chi tiết"
-                        @click="onclickRow(lecturer.id)"
                     >
-                        <td style="width: 25%">
+                        <td style="width: 10%">
                             {{ lecturer.id }}
                         </td>
-                        <td style="width: 25%">
+                        <td style="width: 30%">
                             {{ lecturer.email }}
                         </td>
-                        <td style="width: 25%">
+                        <td style="width: 30%">
                             {{ lecturer.name }}
                         </td>
-                        <td style="width: 25%">
+                        <td class="text-center" style="width: 10%">
                             {{ lecturer.status ? "On" : "Off" }}
+                        </td>
+                        <td style="width: 20%">
+                            <button
+                                class="btn btn-outline-primary pt-1 pb-1 pl-2 pr-2"
+                                @click="onClickRow(lecturer.id)"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button
+                                class="btn btn-outline-warning pt-1 pb-1 pl-2 pr-2"
+                                @click="onClickRow(lecturer.id)"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <paging
-                    :pagination="pagination"
+                    :pagination="lecturers"
                     :offset="2"
                     :per-page="10"
                     @paginate="changePage"
@@ -131,7 +122,7 @@
                     <div class="modal-header">
                         <h4
                             class="modal-title"
-                            style="margin-left: 150px"
+                            style="margin-left: 150px;color: #661a00"
                         >
                             Thêm giảng viên
                         </h4>
@@ -145,7 +136,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body pr-4 pl-4">
                         <div class="form-group">
                             <label for="name">Họ và tên</label>
                             <input
@@ -211,6 +202,74 @@
                 </div>
             </div>
         </div>
+        <button id="btnInfo" style="display: none" data-toggle="modal" data-target="#modalInfo"></button>
+        <div
+            class="modal fade"
+            id="modalInfo"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+            style="margin-top: 20vh"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4
+                            class="modal-title"
+                            style="margin-left: 120px;color: #661a00"
+                        >
+                            Thông tin giảng viên
+                        </h4>
+                        <button
+                            id="btnCloseModalInfo"
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pr-4 pl-4">
+                        <div class="form-group">
+                            <label for="name">Họ và tên:</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="lecturer.name"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="lecturer.email"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Bộ môn:</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="subjectInfo"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Số projects: {{lecturer.projects_count}}</label>
+                            <ul v-if="lecturer.projects_count>0"
+                                style="max-height: 100px;overflow-y: auto; background-color: #e9ecef">
+                                <li v-for="project in lecturer.projects">{{project.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </mdb-container>
 </template>
 <script>
@@ -220,7 +279,8 @@
     import VueToast from "vue-toast-notification";
     import "vue-toast-notification/dist/theme-default.css";
     import {strings} from "../strings";
-    import {mdbCard, mdbContainer, mdbInput, mdbIcon} from "mdbvue";
+    import {mdbCard, mdbContainer, mdbIcon, mdbInput} from "mdbvue";
+    import Paging from "./common/Paging";
 
     Vue.use(VueToast);
     export default {
@@ -230,7 +290,8 @@
             mdbContainer,
             mdbInput,
             mdbIcon,
-            Loading
+            Loading,
+            Paging
         },
         data() {
             return {
@@ -241,19 +302,20 @@
                 errorEmail: "",
                 errorSubject: "",
                 isLoading: false,
-                pagination: {},
                 companiesData: {},
                 page: 1,
                 keyword: "",
                 sort: "ASC",
-                sortBy: "company_id_3rd",
                 entry: 10,
                 messageNoData: strings.messageNoData,
+                lecturers: this.list,
+                lecturer: {},
+                subjectInfo: ""
             }
         },
         props: {
-            lecturers: {
-                type: Array,
+            list: {
+                type: Object,
                 default: []
             },
             subjects: {
@@ -324,7 +386,43 @@
                         this.errorSubject = errors["subject"][0];
                     }
                 });
-            }
+            },
+            changePage(page) {
+                this.page = page;
+                this.getListLecturer(true);
+            },
+            getListLecturer(isPaginator) {
+                if (!isPaginator) {
+                    this.page = 1;
+                }
+                axios.get("/managers/lecturers", {
+                    params: {
+                        page: this.page,
+                        keyword: this.keyword,
+                        sort: this.sort,
+                    }
+                }).then(res => {
+                    if (res.data) {
+                        this.lecturers = res.data.data;
+                    }
+                });
+            },
+            searchLecturer: _.debounce(function () {
+                this.getListLecturer();
+            }, 1000),
+            sortLecturers() {
+                if (this.sort === "ASC") {
+                    this.sort = "DESC";
+                } else {
+                    this.sort = "ASC";
+                }
+                this.getListLecturer(true);
+            },
+            onClickRow(id) {
+                this.lecturer = this.lecturers.data.filter(item => item.id === id)[0];
+                this.subjectInfo = this.lecturer.subject.name;
+                $('#btnInfo').click();
+            },
         }
     }
 </script>

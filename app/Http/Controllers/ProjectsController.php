@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
-use App\Repositories\CompartmentRepository;
 use App\Repositories\LaboratoryRepository;
+use App\Repositories\MessageRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\StudentRepository;
+use App\Repositories\TopicRepository;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -34,17 +35,37 @@ class ProjectsController extends Controller
     protected $laboratoryRepository;
 
     /**
+     * @var TopicRepository
+     */
+    protected $topicRepository;
+
+    /**
+     * @var MessageRepository
+     */
+    protected $messageRepository;
+
+    /**
      * ProjectsController constructor.
      *
      * @param ProjectRepository $repository
      * @param StudentRepository $studentRepository
      * @param LaboratoryRepository $laboratoryRepository
+     * @param TopicRepository $topicRepository
+     * @param MessageRepository $messageRepository
      */
-    public function __construct(ProjectRepository $repository, StudentRepository $studentRepository, LaboratoryRepository $laboratoryRepository)
+    public function __construct(
+        ProjectRepository $repository,
+        StudentRepository $studentRepository,
+        LaboratoryRepository $laboratoryRepository,
+        TopicRepository $topicRepository,
+        MessageRepository $messageRepository
+    )
     {
         $this->repository = $repository;
         $this->studentRepository = $studentRepository;
         $this->laboratoryRepository = $laboratoryRepository;
+        $this->topicRepository = $topicRepository;
+        $this->messageRepository = $messageRepository;
     }
 
     /**
@@ -63,17 +84,41 @@ class ProjectsController extends Controller
      *
      * @param ProjectCreateRequest $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function store(ProjectCreateRequest $request)
     {
         try {
-//            $this->repository->create
-
+            $request['lecturer_id'] = auth()->user()->id;
+            $project = $this->repository->create($request->only('lecturer_id', 'compartment_id', 'name', 'date_start', 'date_finish'));
+            $students = $request->get('students');
+            $students = array_map(function ($member) use ($project) {
+                $student['project_id'] = $project->id;
+                $student['student_id'] = $member['id'];
+                return $student;
+            }, $students);
+            $project->students()->attach($students);
+            $topics=$request->get('topics');
+            $topics = array_map(function ($item) use ($project) {
+                $topic['project_id'] = $project->id;
+                $topic['topic_id'] = $item['id'];
+                return $topic;
+            }, $topics);
+            $project->topics()->attach($topics);
+            if ($request->get('chairs') > 0 || $request->get('tables') > 0 || $request->get('computers') > 0) {
+                $request['project_id'] = $project->id;
+                $this->messageRepository->create($request->only('project_id', 'compartment_id', 'tables', 'chairs', 'computers'));
+            }
+            return response()->json([
+                'error' => false
+            ]);
         } catch (\Exception $e) {
-
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -184,6 +229,7 @@ class ProjectsController extends Controller
     public function create()
     {
         $laboratories = $this->laboratoryRepository->with('compartments')->all();
-        return view('pages.lecturer.pages.createProject', compact( 'laboratories'));
+        $topics = $this->topicRepository->all();
+        return view('pages.lecturer.pages.createProject', compact('laboratories', 'topics'));
     }
 }

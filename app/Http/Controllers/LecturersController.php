@@ -47,12 +47,19 @@ class LecturersController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $lecturers = $this->repository->all();
+        $lecturers = $this->repository->getListLecturers($request->all());
         $subjects = $this->subjectRepository->all();
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $lecturers,
+            ]);
+        }
         return view('pages.manager.pages.lecturers', compact('lecturers', 'subjects'));
     }
 

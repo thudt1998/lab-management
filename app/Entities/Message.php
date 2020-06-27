@@ -20,6 +20,30 @@ class Message extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'project_id',
+        'compartment_id',
+        'status',
+        'tables',
+        'chairs',
+        'computers'
+    ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function project()
+    {
+        return $this->belongsTo(Project::class)->with(['lecturer','students']);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function compartment()
+    {
+        return $this->belongsTo(Compartment::class)->with('laboratory');
+    }
 
 }

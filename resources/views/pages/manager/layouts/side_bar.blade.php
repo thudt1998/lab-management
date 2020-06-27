@@ -1,15 +1,27 @@
 <div class="sidebar-fixed position-fixed">
-    <div class="mt-3 mb-3" style="margin:0 auto;text-align: center">
+    <div class="mt-3" style="margin:0 auto;text-align: center">
        <a href="{{route(MANAGER)}}"><img src="{{asset('image/default-avatar.png')}}" class="avatar"></a>
+        <div class="mt-2">
+            <span>{{auth()->user()->email}}</span>
+        </div>
     </div>
-    <ul class="list-group" style="position: relative">
+    <ul class="list-group mt-2" style="position: relative">
+        <a href="{{route(MANAGER)}}" style="text-decoration: none;">
+            <li
+                class="{{request()->is('managers')?
+                        'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
+                        'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
+            >
+                <i class="fas fa-chart-line mr-2"></i>Dashboard
+            </li>
+        </a>
         <a href="{{route('lecturers.index')}}" style="text-decoration: none;">
             <li
                 class="{{request()->is('managers/lecturers*')?
                         'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
                         'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
             >
-                <i class="mr-3 fas fa-users"></i>Giảng viên
+                <i class="mr-2 fas fa-users"></i>Giảng viên
             </li>
         </a>
         <a href="{{route('laboratories.index')}}" style="text-decoration: none;">
@@ -18,7 +30,7 @@
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
                 >
-                <i class="mr-3 fas fa-building"></i>Phòng
+                <i class="mr-2 fas fa-building"></i>Phòng
             </li>
         </a>
         <a href="{{route('compartments.index')}}" style="text-decoration: none;">
@@ -27,12 +39,30 @@
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
                     'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
             >
-                <i class="mr-3 fas fa-microscope"></i>Ngăn
+                <i class="mr-2 fas fa-microscope"></i>Ngăn
+            </li>
+        </a>
+        <a href="{{route(LIST_PROJECTS_MANGER)}}" style="text-decoration: none;">
+            <li
+                class="{{request()->is('managers/get-projects')?
+                    'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
+                    'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
+            >
+                <i class="fab fa-r-project mr-2"></i>Project
+            </li>
+        </a>
+        <a href="{{route(LIST_STUDENTS_MANGER)}}" style="text-decoration: none;">
+            <li
+                class="{{request()->is('managers/get-students')?
+                    'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top active':
+                    'list-group-item d-flex justify-content-between align-items-center list-group-item-action border-top'}}"
+            >
+                <i class="fas fa-users mr-2"></i>Sinh viên
             </li>
         </a>
 
         <a style="text-decoration: none;font-size:1rem" data-toggle="modal" data-target="#modalLogout">
-            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-action logout text-dark border-top">
+            <li class="mb-3 list-group-item d-flex justify-content-between align-items-center list-group-item-action logout text-dark border-top">
                 <i class="mr-3 fas fa-sign-out-alt text-dark"></i>Đăng xuất
             </li>
         </a>

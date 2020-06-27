@@ -8,8 +8,7 @@
     <title>LAB MANAGEMENT</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body>
-
+<body style="background-color: #f2f3f5">
 @auth
     @include('layouts.header')
 @else
@@ -18,6 +17,10 @@
             <a href="{{route(WELCOME)}}">
                 <img src="{{asset('image/logo.png')}}" width="100">
             </a>
+        </div>
+        <div class="pt-2">
+            <h5>TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI</h5>
+            <h5>VIỆN CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG</h5>
         </div>
     </nav>
 @endauth

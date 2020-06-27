@@ -1,16 +1,8 @@
 <template>
     <mdb-container>
         <mdb-card wide>
-            <div class="pl-3 pt-3">
-                <button
-                    class="btn btn-primary"
-                    @click="addProject"
-                >
-                    <i class="fas fa-plus-circle"></i> Thêm
-                </button>
-            </div>
             <div class="margin-top style-data-table">
-                <div class="margin-top font-size">hay
+                <div class="margin-top font-size">
                     <h3>Danh sách project</h3>
                 </div>
                 <div class="d-flex justify-content-end">
@@ -40,11 +32,8 @@
                             />
                             <span class="font-weight-500">ID</span>
                         </th>
-                        <th class="th-sm" style="text-align: center">
-                            <span class="font-weight-500">Tên project</span>
-                        </th>
-                        <th class="th-sm" style="text-align: center">
-                            <span class="font-weight-500">Trạng thái</span>
+                        <th class="th-sm">
+                            <span class="font-weight-500">Tên</span>
                         </th>
                     </tr>
                     </thead>
@@ -56,14 +45,11 @@
                         title="Xem chi tiết"
                         @click="onclickRow(project.id)"
                     >
-                        <td style="width: 20%">
+                        <td style="width: 50%">
                             {{ project.id }}
                         </td>
-                        <td style="width: 60%;text-align: center">
+                        <td style="width: 50%">
                             {{ project.name }}
-                        </td>
-                        <td style="width: 20%;text-align: center">
-                            {{ project.date_start }}
                         </td>
                     </tr>
                     </tbody>
@@ -84,17 +70,16 @@
         </mdb-card>
     </mdb-container>
 </template>
-
 <script>
     import Vue from "vue";
     import VueToast from "vue-toast-notification";
     import "vue-toast-notification/dist/theme-default.css";
-    import {strings} from "../../strings";
+    import {strings} from "../strings";
     import {mdbCard, mdbContainer, mdbIcon, mdbInput} from "mdbvue";
 
     Vue.use(VueToast);
     export default {
-        name: "ProjectComponent",
+        name: "ListProjectsComponent",
         components: {
             mdbCard,
             mdbContainer,
@@ -103,25 +88,17 @@
         },
         data() {
             return {
-                messageNoData: strings.messageNoData
-            };
-        },
-        created() {
+                messageNoData: strings.messageNoData,
+            }
         },
         props: {
             projects: {
                 type: Array,
                 default: []
-            }
+            },
         },
-        methods: {
-            addProject() {
-                window.location.href = "/lecturers/projects/create";
-            }
-        }
     }
 </script>
-
 <style scoped>
     .md-menu-content {
         z-index: 99999 !important;
@@ -132,8 +109,18 @@
         font-weight: 400;
     }
 
+    .error-validate {
+        font-style: italic;
+        font-size: 13px;
+        color: red;
+    }
+
     .notices .toast {
         margin-top: 50px;
+    }
+
+    .error-input {
+        border: 1px solid #e3342f;
     }
 
     .margin-top {
@@ -164,5 +151,9 @@
 
     .font-weight-500 {
         font-weight: 500;
+    }
+
+    .entry {
+        margin-top: 0.7rem;
     }
 </style>

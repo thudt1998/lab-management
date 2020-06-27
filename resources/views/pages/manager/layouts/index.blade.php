@@ -21,7 +21,6 @@
         .main-content-admin {
             min-height: calc(100vh);
             height: 100vh;
-            overflow-y: scroll;
         }
 
         .avatar{
@@ -41,6 +40,7 @@
                 style="background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(126,126,228,1) 0%, rgba(0,212,255,1) 100%);"
             >
                 <div id="app">
+                    <notification-component></notification-component>
                     @yield("content")
                 </div>
             </div>
@@ -51,3 +51,10 @@
 
 </body>
 </html>
+
+<script>
+    import NotificationComponent from "../../../../js/components/NotificationComponent";
+    export default {
+        components: {NotificationComponent}
+    }
+</script>

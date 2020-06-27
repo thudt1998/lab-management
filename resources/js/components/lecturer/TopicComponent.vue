@@ -15,7 +15,7 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    <strong>Danh sách đề tài</strong>
+                    <h3>Danh sách đề tài</h3>
                 </div>
                 <div class="d-flex justify-content-end">
                     <mdb-input
