@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\MessageCreateRequest;
 use App\Http\Requests\MessageUpdateRequest;
+use App\Repositories\CompartmentRepository;
 use App\Repositories\MessageRepository;
-use App\Validators\MessageValidator;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
  * Class MessagesController.
@@ -25,20 +22,20 @@ class MessagesController extends Controller
     protected $repository;
 
     /**
-     * @var MessageValidator
+     * @var CompartmentRepository
      */
-    protected $validator;
+    protected $compartmentRepository;
 
     /**
      * MessagesController constructor.
      *
      * @param MessageRepository $repository
-     * @param MessageValidator $validator
+     * @param CompartmentRepository $compartmentRepository
      */
-    public function __construct(MessageRepository $repository, MessageValidator $validator)
+    public function __construct(MessageRepository $repository, CompartmentRepository $compartmentRepository)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
+        $this->compartmentRepository = $compartmentRepository;
     }
 
     /**
@@ -64,7 +61,7 @@ class MessagesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  MessageCreateRequest $request
+     * @param MessageCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      *
@@ -80,7 +77,7 @@ class MessagesController extends Controller
 
             $response = [
                 'message' => 'Message created.',
-                'data'    => $message->toArray(),
+                'data' => $message->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -92,7 +89,7 @@ class MessagesController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -104,7 +101,7 @@ class MessagesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -125,7 +122,7 @@ class MessagesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -139,43 +136,28 @@ class MessagesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  MessageUpdateRequest $request
-     * @param  string            $id
-     *
-     * @return Response
-     *
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     * @param MessageUpdateRequest $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(MessageUpdateRequest $request, $id)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $message = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'Message updated.',
-                'data'    => $message->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            $compartment = $this->compartmentRepository->find($request->get('compartment_id'));
+            $this->compartmentRepository->update([
+                'tables' => $compartment->tables + (int)$request->get('tables'),
+                'chairs' => $compartment->chairs + (int)$request->get('chairs'),
+                'computers' => $compartment->computers + (int)$request->get('computers'),
+            ], $request->get('compartment_id'));
+            $this->repository->update(['status' => 0], $request->get('id'));
+            return response()->json([
+                'error' => false,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -183,7 +165,7 @@ class MessagesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

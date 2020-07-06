@@ -2,8 +2,8 @@
 
 namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use Prettus\Repository\Contracts\Transformable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 /**
@@ -11,9 +11,11 @@ use Prettus\Repository\Traits\TransformableTrait;
  *
  * @package namespace App\Entities;
  */
-class Student extends Model implements Transformable
+class Student extends Authenticatable
 {
-    use TransformableTrait;
+    use Notifiable;
+
+    protected $guarded = "student";
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +39,14 @@ class Student extends Model implements Transformable
     public function lecturer()
     {
         return $this->belongsTo(Lecturer::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_students', 'student_id', 'project_id');
     }
 
 }

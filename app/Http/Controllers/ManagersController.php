@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Message;
-use App\Entities\Project;
 use App\Entities\Student;
 use App\Http\Requests\ManagerCreateRequest;
 use App\Http\Requests\ManagerUpdateRequest;
 use App\Repositories\ManagerRepository;
+use App\Repositories\ProjectRepository;
 use App\Validators\ManagerValidator;
+use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -25,13 +26,20 @@ class ManagersController extends Controller
     protected $repository;
 
     /**
+     * @var ProjectRepository
+     */
+    protected $projectRepository;
+
+    /**
      * ManagersController constructor.
      *
      * @param ManagerRepository $repository
+     * @param ProjectRepository $projectRepository
      */
-    public function __construct(ManagerRepository $repository)
+    public function __construct(ManagerRepository $repository, ProjectRepository $projectRepository)
     {
         $this->repository = $repository;
+        $this->projectRepository = $projectRepository;
     }
 
     /**
@@ -200,27 +208,49 @@ class ManagersController extends Controller
      */
     public function getNotifications()
     {
-        $notifications = Message::with(['project', 'compartment'])->where('status', '1')->get();
+        $notifications = Message::with(['project', 'compartment'])->where('status', '=', 1)->get();
         return response()->json([
             'notifications' => $notifications
         ]);
     }
 
     /**
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getStudents()
+    public function getStudents(Request $request)
     {
-        $students = Student::all();
+        $students = Student::with(['lecturer', 'projects'])
+            ->orderBy('name', 'ASC')
+            ->where('name', 'like', '%' . $request->get('keyword') . '%')
+            ->paginate(10);
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $students,
+            ]);
+        }
         return view('pages.manager.pages.students', compact('students'));
     }
 
     /**
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getProjects()
+    public function getProjects(Request $request)
     {
-        $projects = Project::with('lecturer')->get();
+        $keyword = $request->get('keyword');
+        $projects = $this->projectRepository
+            ->with(['lecturer', 'students', 'topics', 'compartment'])
+            ->whereHas('lecturer', function ($query) use ($keyword) {
+                $query->where('name', 'like', '%' . $keyword . '%');
+            })->paginate(10);
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $projects,
+            ]);
+        }
         return view('pages.manager.pages.projects', compact('projects'));
     }
 }

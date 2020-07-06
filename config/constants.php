@@ -13,6 +13,11 @@ const LECTURER = 'lecturer';
 const STUDENT = 'student';
 const LIST_STUDENTS_MANGER='list-students-manager';
 const LIST_PROJECTS_MANGER='list-projects-manager';
+const LOGIN_STUDENT = 'login-student';
+const LOGOUT_STUDENT = 'logout-student';
+const LIST_LECTURES_STUDENT='list-lecturers-student';
+const LIST_PROJECTS_STUDENT='list-projects-student';
+
 
 /**
  * Mail password

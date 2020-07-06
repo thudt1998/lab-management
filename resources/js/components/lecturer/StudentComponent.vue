@@ -13,9 +13,9 @@
                     <i class="fas fa-plus-circle"></i> Thêm
                 </button>
             </div>
-            <div class="margin-top style-data-table">
+            <div class="style-data-table mt-0">
                 <div class="margin-top font-size">
-                    <h3>Danh sách sinh viên trong LAB</h3>
+                    <h3 style="color: #661a00">Danh sách sinh viên trong LAB</h3>
                 </div>
                 <div class="d-flex justify-content-end">
                     <mdb-input
@@ -32,26 +32,19 @@
                     <tr>
                         <th
                             class="th-sm"
-                            @click="sortCompanies('company_id_3rd')"
                         >
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'ASC'"
-                                icon="sort-up"
-                            />
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'DESC'"
-                                icon="sort-down"
-                            />
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm" style="text-align: center">
                             <span class="font-weight-500">Họ và tên</span>
                         </th>
+                        <th class="th-sm">
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="student in students"
+                        v-for="student in students.data"
                         :key="student.id"
                         style="cursor: pointer"
                         title="Xem chi tiết"
@@ -60,14 +53,37 @@
                         <td style="width: 20%">
                             {{ student.id }}
                         </td>
-                        <td style="width: 80%;text-align: center">
+                        <td style="width: 50%;text-align: center">
                             {{ student.name }}
+                        </td>
+                        <td style="width: 30%">
+                            <button
+                                class="btn btn-outline-primary pt-1 pb-1 pl-2 pr-2"
+                                @click="onClickRow(compartment.id)"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button
+                                class="btn btn-outline-warning pt-1 pb-1 pl-2 pr-2"
+                                @click="onClickRow(compartment.id)"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                                class="btn btn-outline-danger pt-1 pb-1 pl-2 pr-2"
+                                @click="onClickRow(compartment.id)"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <paging
-                    :pagination="pagination"
+                    :pagination="students"
                     :offset="2"
                     :per-page="10"
                     @paginate="changePage"
@@ -94,6 +110,7 @@
                     <div class="modal-header">
                         <h4
                             class="modal-title"
+                            style="color: #661a00"
                         >
                             Thêm sinh viên
                         </h4>
@@ -107,7 +124,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body mr-5 ml-5">
                         <div class="form-group">
                             <label for="name">Họ và tên</label>
                             <input
@@ -170,6 +187,7 @@
     import "vue-toast-notification/dist/theme-default.css";
     import {strings} from "../../strings";
     import {mdbCard, mdbContainer, mdbIcon, mdbInput} from "mdbvue";
+    import Paging from "../common/Paging";
 
     Vue.use(VueToast);
     export default {
@@ -179,7 +197,8 @@
             mdbContainer,
             mdbInput,
             mdbIcon,
-            Loading
+            Loading,
+            Paging
         },
         data() {
             return {

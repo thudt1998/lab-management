@@ -10,12 +10,13 @@
     <style>
         .header-main {
             padding: 15px;
-            font-size: 1.2rem;
-            font-style: italic;
         }
 
         .route {
             text-decoration: underline;
+            font-size: 1.4rem;
+            color: #661a00 !important;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -23,17 +24,17 @@
 @auth("lecturer")
     @include("pages.lecturer.layouts.header")
     <main class="pb-5">
-        <div id="app" style="margin-top: 10vh;">
+        <div id="app" style="margin-top: 10vh;margin-bottom: 20px">
             <div class="header-main">
-                <li><a href="{{route(LECTURER)}}" class="route">Trang chủ</a> >>
-                    @if(\Request::is('lecturers/students*'))
-                        <a href="{{route('students.index')}}" class="route">Sinh viên
-                    @elseif(\Request::is('lecturers/topics*'))
-                        <a href="{{route('topics.index')}}" class="route">Đề tài
-                    @elseif(\Request::is('lecturers/projects*'))
-                        <a href="{{route('projects.index')}}" class="route">Project
-                    @endif
-                </li>
+                <a href="{{route(LECTURER)}}" class="route">Trang chủ</a> <i class="fas fa-angle-double-right"></i>
+                @if(\Request::is('lecturers/students*'))
+                    <a href="{{route('students.index')}}" class="route">Sinh viên
+                        @elseif(\Request::is('lecturers/topics*'))
+                            <a href="{{route('topics.index')}}" class="route">Đề tài
+                                @elseif(\Request::is('lecturers/projects*'))
+                                    <a href="{{route('projects.index')}}" class="route">Project
+                @endif
+
             </div>
             <div class="modal fade" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
@@ -55,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            @yield("content")
+                @yield("content")
         </div>
     </main>
     @include("layouts.footer")

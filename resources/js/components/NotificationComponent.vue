@@ -9,8 +9,9 @@
             <i class="fas fa-bell">
             </i>
         </a>
-        <span class="badge badge-danger" style="position: fixed; top: 5px; right: 12px; z-index: 9999; font-size: 10px">{{this.notifications.length}}</span>
-        <div class="dropdown-menu pt-0 pb-0" style="margin-top: -60px; z-index: 10000; margin-right: 20px">
+        <span class="badge badge-danger" style="position: fixed; top: 5px; right: 9px; z-index: 9999; font-size: 10px">{{this.notifications.length}}</span>
+        <div class="dropdown-menu pt-0 pb-0"
+             style="margin-top: -60px; z-index: 10000; margin-right: 20px;max-height: 200px;overflow-y: auto">
             <span
                 v-for="notification in notifications"
                 class="dropdown-item"
@@ -20,11 +21,11 @@
                 {{notification.project.name}}
             </span>
         </div>
-        <button id="btnInfo" style="display: none" data-toggle="modal" data-target="#modalInfo">
+        <button id="btnInfoNotification" style="display: none" data-toggle="modal" data-target="#modalInfoNotification">
         </button>
         <div
             class="modal fade"
-            id="modalInfo"
+            id="modalInfoNotification"
             tabindex="-1"
             role="dialog"
             aria-labelledby="exampleModalLabel"
@@ -51,32 +52,29 @@
                     </div>
                     <div class="modal-body pr-4 pl-4">
                         <div class="form-group">
-                            Tên project: {{project.name}}
+                            <h6 class="font-italic" style="font-size: 18px;color: #661a00;font-weight: bold">Thông tin
+                                project:</h6>
+                            <ul style="font-size: 16px">
+                                <li><span class="title">Tên project: </span>{{project.name}}</li>
+                                <li><span class="title">Giảng viên: </span>{{Object(project.lecturer).name}}</li>
+                                <li><span class="title">Số sinh viên: </span>{{Array(project.students).length}}</li>
+                            </ul>
                         </div>
                         <div class="form-group">
-                            Bộ môn: {{project.name}}
-                        </div>
-                        <div class="form-group">
-                            Giảng viên: {{Object(project.lecturer).name}}
-                        </div>
-                        <div class="form-group">
-                            Số sinh viên: {{Array(project.students).length}}
-                        </div>
-                        <div class="form-group">
-                            Số bàn: {{notification.tables}}
-                        </div>
-                        <div class="form-group">
-                            Số ghế: {{notification.chairs}}
-                        </div>
-                        <div class="form-group">
-                            Số máy tính: {{notification.computers}}
+                            <h6 class="font-italic" style="font-size: 18px;color: #661a00;font-weight: bold">Yêu
+                                cầu:</h6>
+                            <ul style="font-size: 16px">
+                                <li><span class="title">Số bàn: </span>{{notification.tables}}</li>
+                                <li><span class="title">Số ghế: </span>{{notification.chairs}}</li>
+                                <li><span class="title">Số máy tính: </span>{{notification.computers}}</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button
                             type="button"
                             class="btn btn-primary"
-                            @click=""
+                            @click="updateNotification"
                         >
                             Cập nhật
                         </button>
@@ -93,6 +91,9 @@
     export default {
         name: "NotificationComponent",
         created() {
+            Echo.channel("new-message").listen(".new-notification", (data) => {
+                this.notifications.push(data.data);
+            });
             axios.get('/managers/get-notification')
                 .then(res => {
                     this.notifications = res.data.notifications;
@@ -103,8 +104,7 @@
         },
         data() {
             return {
-                'notifications': [],
-                'list': [],
+                notifications: [],
                 notification: {},
                 project: {},
             }
@@ -113,8 +113,16 @@
             clickRow(id) {
                 this.notification = this.notifications.filter(item => item.id === id)[0];
                 this.project = this.notification.project;
-                console.log(this.project);
-                $("#btnInfo").click();
+                $("#btnInfoNotification").click();
+            },
+            updateNotification() {
+                axios.put(`/managers/message/${this.project.id}`,this.notification).then(res => {
+                    if (res.data.error === false) {
+                        location.reload();
+                    }
+                }).catch(err => {
+                    console.log(err);
+                });
             }
         }
     }
@@ -132,5 +140,17 @@
     .dropdown-item:hover {
         color: #ffffff;
         background-color: #f5805f;
+    }
+
+    .dropdown-item {
+        padding: 10px;
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    ul li {
+        padding: 2px;
     }
 </style>

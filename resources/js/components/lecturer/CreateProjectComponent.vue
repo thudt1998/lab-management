@@ -217,12 +217,13 @@
                             :autocomplete-items="autocompleteItems"
                             :add-only-from-autocomplete="true"
                             @tags-changed="update"
+                            placeholder="Nhập tên sinh viên"
                         />
                         <span
-                            v-if="errorCompartment"
+                            v-if="errorStudent"
                             class="error-validate"
                         >
-                                {{errorCompartment}}
+                                {{errorStudent}}
                             </span>
                     </div>
                 </div>
@@ -461,6 +462,10 @@
 <style scoped>
     .font-m {
         color: #448aff;
+    }
+
+    .vue-tags-input{
+        max-width: 100%;
     }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

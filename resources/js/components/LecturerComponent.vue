@@ -85,7 +85,7 @@
                             </button>
                             <button
                                 class="btn btn-outline-warning pt-1 pb-1 pl-2 pr-2"
-                                @click="onClickRow(lecturer.id)"
+                                @click="handleUpdate(lecturer.id)"
                                 style="margin-top: -4px;margin-bottom: -2px"
                             >
                                 <i class="fas fa-edit"></i>
@@ -113,7 +113,6 @@
             id="modalAdd"
             tabindex="-1"
             role="dialog"
-            aria-labelledby="exampleModalLabel"
             aria-hidden="true"
             style="margin-top: 20vh"
         >
@@ -270,6 +269,97 @@
                 </div>
             </div>
         </div>
+        <button id="btnUpdate" style="display: none" data-toggle="modal" data-target="#modalUpdate"></button>
+        <div
+            class="modal fade"
+            id="modalUpdate"
+            tabindex="-1"
+            role="dialog"
+            aria-hidden="true"
+            style="margin-top: 20vh"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4
+                            class="modal-title"
+                            style="margin-left: 150px;color: #661a00"
+                        >
+                            Cập nhật giảng viên
+                        </h4>
+                        <button
+                            id="btnCloseModalUpdate"
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pr-4 pl-4">
+                        <div class="form-group">
+                            <label for="name">Họ và tên</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="name"
+                                :class="{'error-input':errorNameUpdate}"
+                            />
+                            <span
+                                v-if="errorNameUpdate"
+                                class="error-validate"
+                            >
+                                {{errorNameUpdate}}
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="email"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Bộ môn</label>
+                            <select
+                                class="browser-default custom-select"
+                                v-model="subject"
+                            >
+                                <option
+                                    v-for="subject in subjects"
+                                    :value="subject.id"
+                                    :key="subject.id"
+                                >
+                                    {{subject.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group custom-switch">
+                            <input
+                                type="checkbox"
+                                class="custom-control-input"
+                                id="customSwitch1"
+                                :checked="status"
+                                @change="status=!status"
+                            >
+                            <label class="custom-control-label" for="customSwitch1">Trạng thái</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            @click="update"
+                        >
+                            Cập nhật
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </mdb-container>
 </template>
 <script>
@@ -297,6 +387,7 @@
             return {
                 name: "",
                 email: "",
+                status: "",
                 subject: "",
                 errorName: "",
                 errorEmail: "",
@@ -310,26 +401,36 @@
                 messageNoData: strings.messageNoData,
                 lecturers: this.list,
                 lecturer: {},
-                subjectInfo: ""
+                subjectInfo: "",
+                errorNameUpdate: "",
+                errorSubjectUpdate: "",
             }
         },
         props: {
             list: {
                 type: Object,
-                default: []
+                default: [],
             },
             subjects: {
                 type: Array,
-                default: []
+                default: [],
             },
             lecturerCreateSuccess: {
                 type: String,
-                default: ""
+                default: "",
             },
             lecturerCreateFail: {
                 type: String,
-                default: ""
-            }
+                default: "",
+            },
+            lecturerUpdateSuccess: {
+                type: String,
+                default: "",
+            },
+            lecturerUpdateFail: {
+                type: String,
+                default: "",
+            },
         },
         created() {
             if (this.lecturerCreateSuccess) {
@@ -338,6 +439,14 @@
             }
             if (this.lecturerCreateFail) {
                 Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.lecturerCreateFail,
+                    {position: "top-right", duration: "10000"});
+            }
+            if (this.lecturerUpdateSuccess) {
+                Vue.$toast.success("<i class=\"far fa-check-circle\"></i>" + "   " + this.lecturerUpdateSuccess,
+                    {position: "top-right", duration: "10000"});
+            }
+            if (this.lecturerUpdateFail) {
+                Vue.$toast.error("<i class=\"far fa-times-circle\"></i>" + "   " + this.lecturerUpdateFail,
                     {position: "top-right", duration: "10000"});
             }
         },
@@ -385,6 +494,7 @@
                     if (errors["subject"]) {
                         this.errorSubject = errors["subject"][0];
                     }
+                    this.isLoading = false;
                 });
             },
             changePage(page) {
@@ -422,6 +532,36 @@
                 this.lecturer = this.lecturers.data.filter(item => item.id === id)[0];
                 this.subjectInfo = this.lecturer.subject.name;
                 $('#btnInfo').click();
+            },
+            handleUpdate(id) {
+                this.errorNameUpdate = "";
+                this.errorSubjectUpdate = "";
+                this.lecturer = this.lecturers.data.filter(item => item.id === id)[0];
+                this.email = this.lecturer.email;
+                this.name = this.lecturer.name;
+                this.subject = this.lecturer.subject_id;
+                this.status = this.lecturer.status;
+                $('#btnUpdate').click();
+            },
+            update() {
+                this.isLoading = true;
+                axios.put(`/managers/lecturers/${this.lecturer.id}`, {name: this.name, subject: this.subject, status: this.status})
+                    .then(() => {
+                        $('#btnCloseModal').click();
+                        this.isLoading = false;
+                        location.reload();
+                    }).catch((error) => {
+                    this.errorNameUpdate = "";
+                    this.errorSubjectUpdate = "";
+                    let errors = error.response.data.errors;
+                    if (errors["name"]) {
+                        this.errorNameUpdate = errors["name"][0];
+                    }
+                    if (errors["subject"]) {
+                        this.errorSubjectUpdate = errors["subject"][0];
+                    }
+                    this.isLoading = false;
+                });
             },
         }
     }

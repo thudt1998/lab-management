@@ -25,10 +25,12 @@ Route::prefix('managers')->group(function () {
         Route::get('/', function () {
             return view('pages.manager.pages.manager');
         })->name(MANAGER);
+
         Route::resource('lecturers', 'LecturersController');
         Route::resource('laboratories', 'LaboratoriesController');
         Route::resource('compartments', 'CompartmentsController');
         Route::get('get-notification', 'ManagersController@getNotifications');
+        Route::resource('message', 'MessagesController');
         Route::get('get-students', 'ManagersController@getStudents')->name(LIST_STUDENTS_MANGER);
         Route::get('get-projects', 'ManagersController@getProjects')->name(LIST_PROJECTS_MANGER);
     });
@@ -52,4 +54,16 @@ Route::prefix('lecturers')->group(function () {
 });
 
 Route::prefix('students')->group(function () {
+    Route::get('/login', 'StudentLoginController@showLoginForm')->name(LOGIN_STUDENT);
+    Route::post('/login', 'StudentLoginController@login');
+    Route::put('forgot-password', 'StudentLoginController@forgotPassword');
+    Route::middleware(['auth:student'])->group(function () {
+        Route::get('logout', 'StudentLoginController@logout')->name(LOGOUT_STUDENT);
+        Route::get('/', function () {
+            return view('pages.student.student');
+        })->name(STUDENT);
+        Route::get('lecturers', 'StudentsController@getLecturers')->name(LIST_LECTURES_STUDENT);
+        Route::get('projects', 'StudentsController@getProjects')->name(LIST_PROJECTS_STUDENT);
+        Route::get('infoLaboratories', 'StudentsController@getInfoLaboratories');
+    });
 });

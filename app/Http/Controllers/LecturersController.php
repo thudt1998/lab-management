@@ -13,7 +13,6 @@ use App\Repositories\SubjectRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
  * Class LecturersController.
@@ -82,7 +81,7 @@ class LecturersController extends Controller
         } catch (\Exception $e) {
             session()->flash('lecturer_create_fail', trans('messages.create.fail'));
             return response()->json([
-                'error' => false,
+                'error' => true,
                 'message' => $e->getMessage()
             ]);
         }
@@ -129,14 +128,22 @@ class LecturersController extends Controller
      * @param LecturerUpdateRequest $request
      * @param string $id
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(LecturerUpdateRequest $request, $id)
     {
         try {
-
-        } catch (ValidatorException $e) {
-
+            $this->repository->update($request->only('name', 'subject', 'status'), $id);
+            session()->flash('lecturer_update_success', trans('messages.update.success'));
+            return response()->json([
+                'error' => false
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('lecturer_update_fail', trans('messages.update.fail'));
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 

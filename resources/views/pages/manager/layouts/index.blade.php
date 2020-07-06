@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>ThanksChatAdmin</title>
+    <title>Quản lý phòng thí nghiệm</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <style>
@@ -51,10 +51,3 @@
 
 </body>
 </html>
-
-<script>
-    import NotificationComponent from "../../../../js/components/NotificationComponent";
-    export default {
-        components: {NotificationComponent}
-    }
-</script>

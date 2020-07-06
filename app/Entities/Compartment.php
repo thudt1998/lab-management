@@ -32,8 +32,17 @@ class Compartment extends Model implements Transformable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function laboratory(){
+    public function laboratory()
+    {
         return $this->belongsTo(Laboratory::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 
 }

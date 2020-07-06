@@ -6,7 +6,8 @@ use App\Http\Requests\CompartmentCreateRequest;
 use App\Http\Requests\CompartmentUpdateRequest;
 use App\Repositories\CompartmentRepository;
 use App\Repositories\LaboratoryRepository;
-use App\Validators\CompartmentValidator;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -42,11 +43,27 @@ class CompartmentsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $compartments = $this->repository->with('laboratory')->all();
+        $today = Carbon::now()->toDateString();
+        $keyword = $request->get('keyword');
+        $compartments = $this->repository
+            ->with('laboratory')
+            ->with(['projects' => function ($q) use ($today) {
+                $q->where('date_start', '<', $today)
+                    ->where('date_finish', '>', $today);
+            }])->whereHas('laboratory', function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%');
+            })->paginate(10);
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $compartments
+            ]);
+        }
         $laboratories = $this->laboratoryRepository->all();
         return view('pages.manager.pages.compartments',
             ['compartments' => $compartments, 'laboratories' => $laboratories]);

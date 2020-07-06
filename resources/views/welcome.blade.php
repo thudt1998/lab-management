@@ -13,7 +13,8 @@
             color: #fff !important;
             width: 300px;
         }
-        .logo{
+
+        .logo {
             height: 350px !important;
         }
     </style>
@@ -67,7 +68,7 @@
                     <hr/>
                     <div>
                         <a
-                            href="#"
+                            href="{{route(LOGIN_STUDENT)}}"
                             class="btn btn-primary btn-login"
                         >
                             Dành cho sinh viên

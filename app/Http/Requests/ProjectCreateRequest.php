@@ -26,9 +26,9 @@ class ProjectCreateRequest extends FormRequest
     {
         return [
             'topics.*'=>['required'],
-            'students.*'=>['required'],
+//            'students.*'=>['required'],
 //            'compartment_id' => ['required'],
-//            'name' => ['required'],
+            'name' => ['required'],
 //            'date_start' => ['required', 'date'],
 //            'date_finish' => ['required',
 //                'date',

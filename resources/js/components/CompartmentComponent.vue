@@ -15,12 +15,12 @@
             </div>
             <div class="margin-top style-data-table">
                 <div class="margin-top font-size">
-                    <h3>Danh sách ngăn phòng</h3>
+                    <h3 style="color: #661a00">Danh sách ngăn phòng</h3>
                 </div>
                 <div class="d-flex justify-content-end">
                     <mdb-input
                         v-model="keyword"
-                        label="Tìm kiếm"
+                        label="Tìm theo phòng"
                         class="mb-0"
                         @change="searchCompanies"
                     />
@@ -32,60 +32,173 @@
                     <tr>
                         <th
                             class="th-sm"
-                            @click="sortCompanies('company_id_3rd')"
                         >
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'ASC'"
-                                icon="sort-up"
-                            />
-                            <mdb-icon
-                                v-if="sortBy === 'company_id_3rd' && sort === 'DESC'"
-                                icon="sort-down"
-                            />
                             <span class="font-weight-500">ID</span>
                         </th>
                         <th class="th-sm">
                             <span class="font-weight-500">Phòng</span>
                         </th>
                         <th class="th-sm">
-                            <span class="font-weight-500">Tên</span>
+                            <span class="font-weight-500">Tên ngăn</span>
+                        </th>
+                        <th class="th-sm">
+                            <span class="font-weight-500">Trạng thái</span>
+                        </th>
+                        <th class="th-sm">
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr
-                        v-for="compartment in compartments"
+                        v-for="compartment in compartments.data"
                         :key="compartment.id"
-                        style="cursor: pointer"
-                        title="Xem chi tiết"
-                        @click="onclickRow(compartment.id)"
                     >
-                        <td style="width: 20%">
+                        <td style="width: 10%">
                             {{ compartment.id }}
                         </td>
-                        <td style="width: 40%">
+                        <td style="width: 20%">
                             {{ compartment.laboratory.name }}
                         </td>
-                        <td style="width: 40%">
+                        <td style="width: 30%">
                             {{ compartment.name }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ compartment.projects.length > 0 ?"Đầy":"Trống" }}
+                        </td>
+                        <td style="width: 30%">
+                            <button
+                                class="btn btn-outline-primary pt-1 pb-1 pl-2 pr-2"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                                @click="onClickRow(compartment.id)"
+                            >
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button
+                                class="btn btn-outline-warning pt-1 pb-1 pl-2 pr-2"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                                class="btn btn-outline-danger pt-1 pb-1 pl-2 pr-2"
+                                style="margin-top: -4px;margin-bottom: -2px"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <paging
-                    :pagination="pagination"
+                    :pagination="compartments"
                     :offset="2"
                     :per-page="10"
                     @paginate="changePage"
                 />
                 <div
-                    v-show="compartments.length === 0"
+                    v-show="compartments.data.length === 0"
                     class="white text-center text-black-50"
                 >
                     {{messageNoData}}
                 </div>
             </div>
         </mdb-card>
+        <button id="btnInfo" style="display: none" data-toggle="modal" data-target="#modalInfo"></button>
+        <div
+            class="modal fade"
+            id="modalInfo"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+            style="margin-top: 20vh"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4
+                            class="modal-title"
+                            style="margin-left: 130px; color: #661a00"
+                        >
+                            Thông tin ngăn phòng
+                        </h4>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pl-4 pr-4">
+                        <div class="form-group">
+                            <label for="laboratory">Phòng</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="Object(compartment.laboratory).name"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Tên ngăn phòng</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="compartment.name"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="tables">Số bàn</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                v-model="compartment.tables"
+                                min="0"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="chairs">Số ghế</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                v-model="compartment.chairs"
+                                min="0"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="computers">Số máy tính</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                v-model="compartment.computers"
+                                min="0"
+                                disabled
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label>Project đang hoạt động</label>
+                            <ul v-for="project in compartment.projects">
+                                <li style="font-size: 1rem; font-style: italic">{{project.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-dismiss="modal"
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div
             class="modal fade"
             id="modalAdd"
@@ -100,7 +213,7 @@
                     <div class="modal-header">
                         <h4
                             class="modal-title"
-                            style="margin-left: 150px"
+                            style="margin-left: 130px; color: #661a00"
                         >
                             Thêm ngăn phòng
                         </h4>
@@ -114,9 +227,9 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body pl-4 pr-4">
                         <div class="form-group">
-                            <label for="subject">Phòng</label>
+                            <label for="laboratory">Phòng</label>
                             <select
                                 class="browser-default custom-select"
                                 v-model="laboratory"
@@ -138,11 +251,11 @@
                             </span>
                         </div>
                         <div class="form-group">
-                            <label for="location">Tên ngăn phòng</label>
+                            <label for="name">Tên ngăn phòng</label>
                             <input
                                 type="text"
                                 class="form-control"
-                                v-model="location"
+                                v-model="name"
                             />
                             <span
                                 v-if="errorName"
@@ -152,46 +265,31 @@
                             </span>
                         </div>
                         <div class="form-group">
-                            <label for="location">Số bàn</label>
+                            <label for="tables">Số bàn</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="form-control"
-                                v-model="location"
+                                v-model="tables"
+                                min="0"
                             />
-                            <span
-                                v-if="errorName"
-                                class="error-validate"
-                            >
-                                {{errorName}}
-                            </span>
                         </div>
                         <div class="form-group">
-                            <label for="location">Số ghế</label>
+                            <label for="chairs">Số ghế</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="form-control"
-                                v-model="location"
+                                v-model="chairs"
+                                min="0"
                             />
-                            <span
-                                v-if="errorName"
-                                class="error-validate"
-                            >
-                                {{errorName}}
-                            </span>
                         </div>
                         <div class="form-group">
-                            <label for="location">Số máy tính</label>
+                            <label for="computers">Số máy tính</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="form-control"
-                                v-model="location"
+                                v-model="computers"
+                                min="0"
                             />
-                            <span
-                                v-if="errorName"
-                                class="error-validate"
-                            >
-                                {{errorName}}
-                            </span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -216,6 +314,7 @@
     import "vue-toast-notification/dist/theme-default.css";
     import {strings} from "../strings";
     import {mdbCard, mdbContainer, mdbIcon, mdbInput} from "mdbvue";
+    import Paging from "./common/Paging";
 
     Vue.use(VueToast);
     export default {
@@ -225,7 +324,8 @@
             mdbContainer,
             mdbInput,
             mdbIcon,
-            Loading
+            Loading,
+            Paging
         },
         data() {
             return {
@@ -234,20 +334,23 @@
                 errorName: "",
                 errorLaboratory: "",
                 isLoading: false,
-                pagination: {},
-                companiesData: {},
                 page: 1,
                 keyword: "",
                 sort: "ASC",
                 sortBy: "company_id_3rd",
                 entry: 10,
                 messageNoData: strings.messageNoData,
+                compartments: this.list,
+                tables: 0,
+                chairs: 0,
+                computers: 0,
+                compartment: {},
             }
         },
         props: {
-            compartments: {
-                type: Array,
-                default: []
+            list: {
+                type: Object,
+                default: {},
             },
             laboratories: {
                 type: Array,
@@ -299,7 +402,33 @@
                         this.errorName = errors["name"][0];
                     }
                 });
-            }
+            },
+            changePage(page) {
+                this.page = page;
+                this.getListCompartment(true);
+            },
+            getListCompartment(isPaginator) {
+                if (!isPaginator) {
+                    this.page = 1;
+                }
+                axios.get("/managers/compartments", {
+                    params: {
+                        page: this.page,
+                        keyword: this.keyword
+                    }
+                }).then(res => {
+                    if (res.data) {
+                        this.compartments = res.data.data;
+                    }
+                });
+            },
+            searchCompanies: _.debounce(function () {
+                this.getListCompartment();
+            }, 1000),
+            onClickRow(id) {
+                this.compartment = this.compartments.data.filter(compartment => compartment.id === id)[0];
+                $('#btnInfo').click();
+            },
         }
     }
 </script>

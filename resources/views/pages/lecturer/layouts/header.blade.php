@@ -4,7 +4,7 @@
                  <img src="{{asset('image/logo.png')}}" height="100" width="100">
             </span>
         <a class="navbar-brand waves-effect" href="{{route(LECTURER)}}" style="text-decoration: none; width: 20%">
-            <strong class="">Hệ thống phòng thí nghiệm</strong>
+            <strong style="color: #343A40;font-weight: bold">Hệ thống phòng thí nghiệm</strong>
         </a>
         <span class="d-flex justify-content-end" style="width: 80%">
             <a class="nav-link dropdown-toggle text-dark text-decoration-none" href="#" id="navbarDropdownMenuLink"

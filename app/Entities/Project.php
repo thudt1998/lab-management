@@ -53,4 +53,12 @@ class Project extends Model implements Transformable
         return $this->belongsTo(Lecturer::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function compartment()
+    {
+        return $this->belongsTo(Compartment::class)->with('laboratory');
+    }
+
 }

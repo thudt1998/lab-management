@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Notification;
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Repositories\LaboratoryRepository;
@@ -75,8 +76,15 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        $projects = $this->repository->all();
-        return view('pages.lecturer.pages.project', compact('projects'));
+        $projects = $this->repository->with(['lecturer', 'students', 'topics', 'compartment'])->paginate(10);
+        $user = auth()->user();
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $projects,
+            ]);
+        }
+        return view('pages.lecturer.pages.project', compact('projects', 'user'));
     }
 
     /**
@@ -100,7 +108,7 @@ class ProjectsController extends Controller
                 return $student;
             }, $students);
             $project->students()->attach($students);
-            $topics=$request->get('topics');
+            $topics = $request->get('topics');
             $topics = array_map(function ($item) use ($project) {
                 $topic['project_id'] = $project->id;
                 $topic['topic_id'] = $item['id'];
@@ -109,7 +117,9 @@ class ProjectsController extends Controller
             $project->topics()->attach($topics);
             if ($request->get('chairs') > 0 || $request->get('tables') > 0 || $request->get('computers') > 0) {
                 $request['project_id'] = $project->id;
-                $this->messageRepository->create($request->only('project_id', 'compartment_id', 'tables', 'chairs', 'computers'));
+                $message = $this->messageRepository->create($request->only('project_id', 'compartment_id', 'tables', 'chairs', 'computers'));
+                $newMessage = $this->messageRepository->with(['project', 'compartment'])->find($message->id);
+                broadcast(new Notification($newMessage));
             }
             return response()->json([
                 'error' => false
@@ -206,21 +216,17 @@ class ProjectsController extends Controller
      *
      * @param int $id
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'Project deleted.',
-                'deleted' => $deleted,
-            ]);
-        }
-
-        return redirect()->back()->with('message', 'Project deleted.');
+        $project=$this->repository->find($id);
+        $project->students()->detach();
+        $project->topics()->detach();
+        $this->repository->delete($id);
+        return response()->json([
+            'error' => false
+        ]);
     }
 
     /**

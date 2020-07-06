@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\Lecturer;
+use App\Entities\Project;
+use App\Entities\Subject;
+use App\Entities\Topic;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentUpdateRequest;
+use App\Repositories\LecturerRepository;
+use App\Repositories\ProjectRepository;
 use App\Repositories\StudentRepository;
 use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
@@ -22,13 +28,31 @@ class StudentsController extends Controller
     protected $repository;
 
     /**
+     * @var ProjectRepository
+     */
+    protected $projectRepository;
+
+    /**
+     * @var LecturerRepository
+     */
+    protected $lecturerRepository;
+
+    /**
      * StudentsController constructor.
      *
      * @param StudentRepository $repository
+     * @param ProjectRepository $projectRepository
+     * @param LecturerRepository $lecturerRepository
      */
-    public function __construct(StudentRepository $repository)
+    public function __construct(
+        StudentRepository $repository,
+        ProjectRepository $projectRepository,
+        LecturerRepository $lecturerRepository
+    )
     {
         $this->repository = $repository;
+        $this->projectRepository = $projectRepository;
+        $this->lecturerRepository = $lecturerRepository;
     }
 
     /**
@@ -38,7 +62,7 @@ class StudentsController extends Controller
      */
     public function index()
     {
-        $students = $this->repository->all();
+        $students = $this->repository->paginate(10);
         return view('pages.lecturer.pages.student', compact('students'));
     }
 
@@ -178,5 +202,75 @@ class StudentsController extends Controller
         return response()->json([
             'data' => $students
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function getLecturers(Request $request)
+    {
+        $name = $request->get('name');
+        $subject = $request->get('subject');
+        $lecturers = Lecturer::with(['subject', 'projects'])
+            ->where('name', 'like', '%' . $name . '%');
+        if ($subject !== null) {
+            $lecturers->whereHas('subject', function ($query) use ($subject) {
+                $query->where('subject_id', '=', $subject);
+            });
+        }
+        $lecturers = $lecturers->paginate(10);
+        $subjects = Subject::all();
+        if (request()->wantsJson()) {
+            return response()->json([
+                'data' => $lecturers,
+            ]);
+        }
+        return view('pages.student.pages.lecturer', compact('lecturers', 'subjects'));
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function getProjects(Request $request)
+    {
+        $name = $request->get('name');
+        $topic = $request->get('topic');
+        $projects = $this->projectRepository
+            ->with(['lecturer', 'students', 'topics', 'compartment'])
+            ->whereHas('lecturer', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
+        if ($topic !== null) {
+            $projects->whereHas('topics', function ($query) use ($topic) {
+                $query->where('topic_id', '=', $topic);
+            });
+        }
+        $projects = $projects->paginate(10);
+        $topics = Topic::all();
+        if (request()->wantsJson()) {
+            return response()->json([
+                'data' => $projects,
+            ]);
+        }
+        return view('pages.student.pages.project', compact('projects', 'topics'));
+    }
+
+    public function getInfoLaboratories()
+    {
+        try {
+            $projects = Project::all()->count();
+            $lecturers = Lecturer::all()->count();
+            return response()->json([
+                'projects' => $projects,
+                'lecturers' => $lecturers
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }
