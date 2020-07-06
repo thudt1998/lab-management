@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\Project;
+use App\Entities\Student;
+use App\Entities\Topic;
+use App\Events\SendPassword;
 use App\Http\Requests\LecturerCreateRequest;
 use App\Http\Requests\LecturerUpdateRequest;
 use App\Repositories\LecturerRepository;
 use App\Repositories\SubjectRepository;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * Class LecturersController.
@@ -41,12 +46,19 @@ class LecturersController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $lecturers = $this->repository->all();
+        $lecturers = $this->repository->getListLecturers($request->all());
         $subjects = $this->subjectRepository->all();
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $lecturers,
+            ]);
+        }
         return view('pages.manager.pages.lecturers', compact('lecturers', 'subjects'));
     }
 
@@ -69,7 +81,7 @@ class LecturersController extends Controller
         } catch (\Exception $e) {
             session()->flash('lecturer_create_fail', trans('messages.create.fail'));
             return response()->json([
-                'error' => false,
+                'error' => true,
                 'message' => $e->getMessage()
             ]);
         }
@@ -116,40 +128,22 @@ class LecturersController extends Controller
      * @param LecturerUpdateRequest $request
      * @param string $id
      *
-     * @return Response
-     *
-     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(LecturerUpdateRequest $request, $id)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $lecturer = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'Lecturer updated.',
-                'data' => $lecturer->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            $this->repository->update($request->only('name', 'subject', 'status'), $id);
+            session()->flash('lecturer_update_success', trans('messages.update.success'));
+            return response()->json([
+                'error' => false
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('lecturer_update_fail', trans('messages.update.fail'));
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -174,5 +168,50 @@ class LecturersController extends Controller
         }
 
         return redirect()->back()->with('message', 'Lecturer deleted.');
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInfoLaboratories()
+    {
+        try {
+            $students = Student::all()->count();
+            $topics = Topic::all()->count();
+            $projects = Project::all()->count();
+            return response()->json([
+                'students' => $students,
+                'topics' => $topics,
+                'projects' => $projects
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $password = Str::random(8);
+            $lecturer = $this->repository->findWhere(['email' => $request->get('email')])->first();
+            $this->repository->update(['password' => Hash::make($password)], $lecturer->id);
+            event(new SendPassword($request->get('email'), $password));
+            return response()->json([
+                'error' => false,
+                'message' => trans('messages.update.password.success')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => trans('messages.update.password.fail')
+            ]);
+        }
     }
 }

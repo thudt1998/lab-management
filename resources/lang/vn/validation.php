@@ -151,10 +151,8 @@ return [
     */
 
     'attributes' => [
-        'lecturer' => [
-            'name' => 'tên',
-            'subject' => 'bộ môn'
-        ]
+        'name' => 'Tên',
+        'subject' => 'bộ môn',
     ],
 
 ];

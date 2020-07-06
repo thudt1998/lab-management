@@ -1,6 +1,6 @@
 <nav class="flexible-navbar white navbar navbar-light navbar-expand-lg fixed-top scrolling-navbar">
-    <ul class="navbar-nav nav-flex-icons ml-auto">
-        <li class="nav-item">
+    <ul class="navbar-nav nav-flex-icons ml-auto mr-5">
+        <li class="nav-item d-flex">
             <a style="display: flex; align-items: center;">
                 <strong class="text-dark admin-name">{{auth()->user()->email}}</strong>
             </a>

@@ -20,6 +20,18 @@ class Laboratory extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'name',
+        'location'
+    ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function compartments()
+    {
+        return $this->hasMany(Compartment::class);
+    }
 
 }

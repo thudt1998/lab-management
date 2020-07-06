@@ -4,7 +4,7 @@
             class="d-flex justify-content-between register_pager"
         >
             <p style="font-size: 0.9rem; margin-top: 0.5rem">
-                {{ pagination.total }}件中の{{ pagination.from }}から{{ pagination.to }}まで表示
+                Hiển thị <strong>{{ pagination.from }}</strong> đến <strong>{{ pagination.to }}</strong> trong <strong>{{ pagination.total }}</strong> bản ghi
             </p>
             <ul class="pagination pg-blue pagination-sm">
                 <li

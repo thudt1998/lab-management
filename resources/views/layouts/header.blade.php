@@ -5,7 +5,7 @@
             href="#"
             title="チャット画面へ"
         >
-            THANKS CHAT
+            LAB MANAGEMENT
         </a>
         <ul class="navbar-nav nav-flex-icons ml-auto">
             <li class="nav-item dropdown">

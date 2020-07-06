@@ -80,6 +80,4 @@ class ManagerLoginController extends Controller
         return $this->loggedOut($request) ?: redirect('/managers');
     }
 
-
-
 }

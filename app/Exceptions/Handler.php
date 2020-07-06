@@ -62,7 +62,10 @@ class Handler extends ExceptionHandler
             case MANAGER:
                 $login = LOGIN_MANAGER;
                 break;
-            default:
+            case LECTURER:
+                $login = LOGIN_LECTURER;
+                break;
+            case STUDENT:
                 $login = LOGIN_STUDENT;
                 break;
         }

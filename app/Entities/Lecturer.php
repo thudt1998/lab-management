@@ -2,18 +2,20 @@
 
 namespace App\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Lecturer.
  *
  * @package namespace App\Entities;
  */
-class Lecturer extends Model implements Transformable
+class Lecturer extends Authenticatable
 {
-    use TransformableTrait;
+
+    use Notifiable;
+
+    protected $guarded = "lecturer";
 
     /**
      * The attributes that are mass assignable.
@@ -32,5 +34,19 @@ class Lecturer extends Model implements Transformable
     protected $casts = [
         'status' => 'boolean'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subject(){
+        return $this->belongsTo(Subject::class,'subject_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects(){
+        return $this->hasMany(Project::class);
+    }
 
 }
